@@ -32,9 +32,9 @@ SystemConfiguration.framework
 
 * 在Build Phases中的Link Binary With Libraries中加入libPushSDK.a静态库文件或者直接将libPushSDK.a拖入工程内。
   
-*  找到 xcode 工程 Libraries 文件夹的 APServer.h，APServiceCpp.h,APServiceCpp.mm拖入 project 中(或者点击右键，点击 add files to "project name")
+*  将Plugins/iOS/lib 文件夹下的 APServer.h，APServiceCpp.h,APServiceCpp.mm拖入 project 中(或者点击右键，点击 add files to "project name")，APServer.h拖入Class文件夹中,和安卓共享同一个，APServiceCpp.h,APServiceCpp.mm拖入ios文件夹下.
 
-* 在 AppController.mm(注意不是AppDelegate.cpp) 中添加头文件APServer.h
+* 在ios/AppController.mm(注意不是AppDelegate.cpp) 中添加头文件APServer.h
 
 
 ```
