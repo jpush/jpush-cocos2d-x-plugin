@@ -15,17 +15,9 @@ JPush's officially supported Cocos2d-x plugin (Android &amp; iOS). 极光推送�
 * 添加必要的框架
 ```
 CoreTelehony.framework
-```
-```
 Security.framework
-```
-```
 CFNetwork.framework
-```
-```
 CoreFoundation.framework
-```
-```
 SystemConfiguration.framework
 ```
 * 在工程中创建一个新的 Property List 文件，并将其命名为 PushConfig.plist，填入Portal 为你的应用提供的 APP_KEY 等参数
