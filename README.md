@@ -34,11 +34,11 @@ SystemConfiguration.framework
   
 *  将Plugins/iOS/lib 文件夹下的 APServer.h，APServiceCpp.h,APServiceCpp.mm拖入 project 中(或者点击右键，点击 add files to "project name")，APServer.h拖入Class文件夹中,和安卓共享同一个，APServiceCpp.h,APServiceCpp.mm拖入ios文件夹下.
 
-* 在ios/AppController.mm(注意不是AppDelegate.cpp) 中添加头文件APServer.h
+* 在ios/AppController.mm(注意不是AppDelegate.cpp) 中添加头文件APService.h
 
 
 ```
-#import "APServiceCpp.h"
+#import "APService.h"
 ```
 
 
@@ -79,9 +79,11 @@ SystemConfiguration.framework
       completionHandler(UIBackgroundFetchResultNewData);
 }
 ```
-* 在需要处理推送回调的类中添加回调函数，相应地调用 JPush SDK 提供的 API 来实现功能  
- 
+* 在需要处理推送回调的类中添加回调函数，相应地调用 JPush SDK 提供的 API 来实现功能,调用地方需要引入头文件JPushService.h
+
 ```
+#import "JPushService.h"
+
 JPushService::registerCallbackFunction(setupCallback, closeCallback,
                                          Register_callback, Login_callback,
                                          ReceiveMessage_callback);
