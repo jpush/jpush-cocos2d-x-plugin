@@ -23,12 +23,12 @@ SystemConfiguration.framework
 * 创建并配置PushConfig.plist文件
 在你的工程中创建一个新的Property List文件，并将其命名为PushConfig.plist，填入Portal为你的应用提供的APP_KEY等参数。
 
-CHANNEL
+	CHANNEL
 指明应用程序包的下载渠道，为方便分渠道统计。根据你的需求自行定义即可。
 APP_KEY
 在管理Portal上创建应用时自动生成的（AppKey）用以标识该应用。请确保应用内配置的 AppKey 与第1步在 Portal 上创建应用时生成的 AppKey 一致，AppKey 可以在应用详情中查询。
 
-APS_FOR_PRODUCTION
+	APS_FOR_PRODUCTION
 表示应用是否采用生产证书发布( Ad_Hoc 或 APP Store )，0 (默认值)表示采用的是开发者证书，1 表示采用生产证书发布应用。请注意此处配置与 Web Portal 应用环境设置匹配。
 
 ```
