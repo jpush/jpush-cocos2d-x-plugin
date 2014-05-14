@@ -20,7 +20,16 @@ CFNetwork.framework
 CoreFoundation.framework
 SystemConfiguration.framework
 ```
-* 在工程中创建一个新的 Property List 文件，并将其命名为 PushConfig.plist，填入Portal 为你的应用提供的 APP_KEY 等参数
+* 创建并配置PushConfig.plist文件
+在你的工程中创建一个新的Property List文件，并将其命名为PushConfig.plist，填入Portal为你的应用提供的APP_KEY等参数。
+
+CHANNEL
+指明应用程序包的下载渠道，为方便分渠道统计。根据你的需求自行定义即可。
+APP_KEY
+在管理Portal上创建应用时自动生成的（AppKey）用以标识该应用。请确保应用内配置的 AppKey 与第1步在 Portal 上创建应用时生成的 AppKey 一致，AppKey 可以在应用详情中查询。
+
+APS_FOR_PRODUCTION
+表示应用是否采用生产证书发布( Ad_Hoc 或 APP Store )，0 (默认值)表示采用的是开发者证书，1 表示采用生产证书发布应用。请注意此处配置与 Web Portal 应用环境设置匹配。
 
 ```
 {
@@ -30,7 +39,10 @@ SystemConfiguration.framework
 }
 ```
 
-* 在Build Phases中的Link Binary With Libraries中加入libPushSDK.a静态库文件或者直接将libPushSDK.a拖入工程内。
+* Build Settings
+设置 Search Paths 下的 User Header Search Paths 和 Library Search Paths，比如SDK文件夹（默认为lib）与工程文件在同一级目录下，则都设置为"$(SRCROOT)/[文件夹名称]"即可。
+
+* 在XCode中选择“Add files to 'Your project name'...”，将lib子文件夹中的libPushSDK.a添加到你的工程目录中。
   
 *  将Plugins/iOS/lib 文件夹下的 APServer.h，APServiceCpp.h,APServiceCpp.mm拖入 project 中(或者点击右键，点击 add files to "project name")，APServer.h拖入Class文件夹中,和安卓共享同一个，APServiceCpp.h,APServiceCpp.mm拖入ios文件夹下.
 
