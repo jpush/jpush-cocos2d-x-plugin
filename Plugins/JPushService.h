@@ -111,8 +111,6 @@ class JPushService {
    * 设置标签和(或)别名（若参数为nil，则忽略；若是空对象，则清空；详情请参考文档：http://docs.jpush.cn/pages/viewpage.action?pageId=3309913）
    */
   static void setAliasAndTags(void *p_handle, const char *alias,
-                              set<string> *tags);
-  static void setAliasAndTags(void *p_handle, const char *alias,
                               set<string> *tags, APTagAliasCallback callback);
   static void setAlias(void *p_handle, const char *alias,
                        APTagAliasCallback callback);

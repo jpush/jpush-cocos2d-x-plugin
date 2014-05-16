@@ -27,9 +27,12 @@ string convert_string_to_c(NSString *oc_string) {
  *  @return Objective C NSSet
  */
 NSSet *convert_to_oc(set<string> *tags) {
+  if (tags == NULL) {
+    return nil;
+  }
   set<string>::iterator it;
   if (tags->empty()) {
-    return nil;
+    return [NSSet set];
   }
 
   NSMutableSet *result = [NSMutableSet set];
@@ -51,6 +54,9 @@ NSSet *convert_to_oc(set<string> *tags) {
  *  @param target_tags C plus plus std:set
  */
 void convert_to_c(NSSet *source_tags, set<string> *target_tags) {
+  if (![source_tags count]) {
+    target_tags = NULL;
+  }
   for (NSString *oc_string in source_tags) {
     string c_string = convert_string_to_c(oc_string);
     target_tags->insert(c_string);
@@ -375,7 +381,7 @@ void JPushService::registerCallbackFunction(
 /*
  *   set callback function
  */
-static void registerSetupCallbackFunction(
+void JPushService::registerSetupCallbackFunction(
     void *p_handle, APNetworkDidSetup_callback setup_callback) {
   callbackController.setupCallback = setup_callback;
   setupHandle = p_handle;
@@ -384,7 +390,7 @@ static void registerSetupCallbackFunction(
 /*
  *   set close callback function
  */
-static void registerCloseCallbackFunction(
+void JPushService::registerCloseCallbackFunction(
     void *p_handle, APNetworkDidClose_callback close_callback) {
   callbackController.closeCallback = close_callback;
   closeHandle = p_handle;
@@ -392,7 +398,7 @@ static void registerCloseCallbackFunction(
 /*
  *   set callback callback function
  */
-static void registerRegisterCallbackFunction(
+void JPushService::registerRegisterCallbackFunction(
     void *p_handle, APNetworkDidRegister_callback register_callback) {
   callbackController.registerCallback = register_callback;
   registerHandle = p_handle;
@@ -400,7 +406,7 @@ static void registerRegisterCallbackFunction(
 /*
  *   set login callback function
  */
-static void registerLoginCallbackFunction(
+void JPushService::registerLoginCallbackFunction(
     void *p_handle, APNetworkDidLogin_callback login_callback) {
   callbackController.loginCallback = login_callback;
   loginHandle = p_handle;
@@ -408,7 +414,7 @@ static void registerLoginCallbackFunction(
 /*
  *   set message callback function
  */
-static void registerCallbackFunction(
+void JPushService::registerCallbackFunction(
     void *p_handle, APNetworkDidReceiveMessage_callback message_callback) {
   callbackController.receiveMessageCallback = message_callback;
   receiveMessageHandle = p_handle;
@@ -418,7 +424,8 @@ static void registerCallbackFunction(
  *  set Tags & Alias C++ API.
  */
 void JPushService::setAliasAndTags(void *p_handle, const char *alias,
-                                   c_tags tags, APTagAliasCallback callback) {
+                                   set<string> *tags,
+                                   APTagAliasCallback callback) {
   if (callbackController) {
     setAliasTagsHandle = p_handle;
     [callbackController setAliasAndTags:convert_to_oc(tags)
@@ -427,7 +434,7 @@ void JPushService::setAliasAndTags(void *p_handle, const char *alias,
   }
 }
 
-void JPushService::setTags(void *p_handle, c_tags tags,
+void JPushService::setTags(void *p_handle, set<string> *tags,
                            APTagAliasCallback callback) {
   if (callbackController) {
     setAliasTagsHandle = p_handle;
