@@ -45,6 +45,34 @@ NSSet *convert_to_oc(set<string> *tags) {
 }
 
 /**
+ *  convert const char* to NSString
+ *
+ *  @param c_str C plus plus const char*
+ *
+ *  @return Objective C NSString
+ */
+NSString *convert_to_oc(const char *c_str) {
+  if (c_str == NULL) {
+    return nil;
+  }
+  return [NSString stringWithUTF8String:c_str];
+}
+
+/**
+ *  convert const NSString to char*
+ *
+ *  @param oc_string Objective C NSString
+ *
+ *  @return C plus plus const char*
+ */
+const char *convert_to_c(NSString *oc_string) {
+  if (oc_string == nil) {
+    return NULL;
+  }
+  return [oc_string UTF8String];
+}
+
+/**
  *
  */
 /**
@@ -299,7 +327,7 @@ static void *setAliasTagsHandle = nil;
                     alias:(NSString *)alias {
   c_tags ctags = new set<string>;
   convert_to_c(tags, ctags);
-  _tagsAliasCallback(setAliasTagsHandle, iResCode, [alias UTF8String], ctags);
+  _tagsAliasCallback(setAliasTagsHandle, iResCode, convert_to_c(alias), ctags);
   delete_tags_convert(ctags);
 }
 
@@ -429,7 +457,7 @@ void JPushService::setAliasAndTags(void *p_handle, const char *alias,
   if (callbackController) {
     setAliasTagsHandle = p_handle;
     [callbackController setAliasAndTags:convert_to_oc(tags)
-                                  alias:[NSString stringWithUTF8String:alias]
+                                  alias:convert_to_oc(alias)
                                callback:callback];
   }
 }
@@ -446,8 +474,7 @@ void JPushService::setAlias(void *p_handle, const char *alias,
                             APTagAliasCallback callback) {
   if (callbackController) {
     setAliasTagsHandle = p_handle;
-    [callbackController setAlias:[NSString stringWithUTF8String:alias]
-                        callback:callback];
+    [callbackController setAlias:convert_to_oc(alias) callback:callback];
   }
 }
 
