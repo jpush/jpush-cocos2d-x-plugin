@@ -82,14 +82,18 @@ const char *convert_to_c(NSString *oc_string) {
  *  @param target_tags C plus plus std:set
  */
 void convert_to_c(NSSet *source_tags, set<string> *target_tags) {
-  if (![source_tags count]) {
+  if (source_tags == nil) {
     target_tags = NULL;
+    source_tags = nil;
+    return;
+  }
+  if (![source_tags count]) {
+    source_tags = nil;
+    return;
   }
   for (NSString *oc_string in source_tags) {
     string c_string = convert_string_to_c(oc_string);
     target_tags->insert(c_string);
-  }
-  if (target_tags->empty()) {
   }
   source_tags = nil;
 }
@@ -481,6 +485,8 @@ void JPushService::setAlias(void *p_handle, const char *alias,
 /*
  * this function used to check whether tags valid.
  *
+ * TODO
+ * delete ctags after you use this function it.
  */
 c_tags JPushService::filterValidTags(c_tags tags, set<string> *result) {
   if (result == NULL) {
