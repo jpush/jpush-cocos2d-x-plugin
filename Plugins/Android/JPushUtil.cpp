@@ -76,11 +76,17 @@ jobject JPushUtil::getJintSet(std::set<int> *stdSet){
 }
 
 
-std::set<std::string> * JPushUtil::getStdStringSet(jobject object){
+std::set<std::string> * JPushUtil::getStdStringSet(std::set<std::string>*originalSet,jobject object){
 	if(object == NULL){
 		return NULL;
 	}
-	std::set<std::string> *std_set = new std::set<std::string>;
+
+	if(originalSet == NULL){
+		originalSet = new std::set<std::string>;
+	}else{
+		originalSet->empty();
+	}
+
 	JniMethodInfo t;
 	if ( JniHelper::getMethodInfo(t
 							,"java/util/HashSet"
@@ -103,14 +109,14 @@ std::set<std::string> * JPushUtil::getStdStringSet(jobject object){
 				jstring string = (jstring)ret.env->CallObjectMethod(j_iteraror,ret.methodID);
 				const char *tag = ret.env->GetStringUTFChars(string, JNI_FALSE);
 				std::string cpp_tag = tag;
-				std_set->insert(cpp_tag);
+				originalSet->insert(cpp_tag);
 				SAFE_RELEASE_JOBJ(string);
 			}
 			SAFE_RELEASE_JOBJ(ret.classID);
 			}
 		}
 	}
-	return std_set;
+	return originalSet;
 }
 
 }

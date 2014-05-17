@@ -182,17 +182,17 @@ void JPushService::setAlias(void* p_handle,const char *alias, APTagAliasCallback
 								,"setAlias"
 								,"(JLandroid/content/Context;Ljava/lang/String;J)V" )){
 
-			jstring j_alias = GET_JSTRING(alias);
-			jobject ctx = getContext();
-			long func_ptr = (long)callback;
-			jlong j_func_ptr = func_ptr;
-			long callback_handler = (long)p_handle;
-			jlong j_callback_handler = callback_handler;
-			t.env->CallObjectMethod(callbackHelper,t.methodID,j_callback_handler,ctx,j_alias,j_func_ptr);
-			SAFE_RELEASE_JCONTEXT(ctx);
-			SAFE_RELEASE_JOBJ(j_alias);
-			SAFE_RELEASE_JOBJ(callbackHelper);
-			SAFE_RELEASE_JOBJ(t.classID);
+		jstring j_alias = GET_JSTRING(alias);
+		jobject ctx = getContext();
+		long func_ptr = (long)callback;
+		jlong j_func_ptr = func_ptr;
+		long callback_handler = (long)p_handle;
+		jlong j_callback_handler = callback_handler;
+		t.env->CallObjectMethod(callbackHelper,t.methodID,j_callback_handler,ctx,j_alias,j_func_ptr);
+		SAFE_RELEASE_JCONTEXT(ctx);
+		SAFE_RELEASE_JOBJ(j_alias);
+		SAFE_RELEASE_JOBJ(callbackHelper);
+		SAFE_RELEASE_JOBJ(t.classID);
 	}
 }
 
@@ -204,21 +204,24 @@ void JPushService::setTags(void* p_handle,set<string> *tags, APTagAliasCallback 
 									,"setTags"
 									,"(JLandroid/content/Context;Ljava/util/Set;J)V" )){
 
-			jobject ctx = getContext();
-			jobject jtags = JPushUtil::getJstringSet(tags);
-			long func_ptr = (long)callback;
-			jlong j_func_ptr = func_ptr;
-			long callback_handler = (long)p_handle;
-			jlong j_callback_handler = callback_handler;
-			t.env->CallObjectMethod(callbackHelper,t.methodID,j_callback_handler,ctx,jtags,j_func_ptr);
-			SAFE_RELEASE_JCONTEXT(ctx);
-			SAFE_RELEASE_JOBJ(jtags);
-			SAFE_RELEASE_JOBJ(callbackHelper);
-			SAFE_RELEASE_JOBJ(t.classID);
+		jobject ctx = getContext();
+		jobject jtags = JPushUtil::getJstringSet(tags);
+		long func_ptr = (long)callback;
+		jlong j_func_ptr = func_ptr;
+		long callback_handler = (long)p_handle;
+		jlong j_callback_handler = callback_handler;
+		t.env->CallObjectMethod(callbackHelper,t.methodID,j_callback_handler,ctx,jtags,j_func_ptr);
+		SAFE_RELEASE_JCONTEXT(ctx);
+		SAFE_RELEASE_JOBJ(jtags);
+		SAFE_RELEASE_JOBJ(callbackHelper);
+		SAFE_RELEASE_JOBJ(t.classID);
 	}
 }
 
 set<string> * JPushService::filterValidTags(set<string> *tags){
+	if(tags == NULL){
+		return NULL;
+	}
 	JniMethodInfo t;
 	set<string> * cpp_filteredTags;
 	if ( JniHelper::getStaticMethodInfo(t
@@ -227,7 +230,9 @@ set<string> * JPushService::filterValidTags(set<string> *tags){
 								,"(Ljava/util/Set;)Ljava/util/Set;" )){
 		jobject jtags = JPushUtil::getJstringSet(tags);
 		jobject filteredTags = t.env->CallStaticObjectMethod(t.classID,t.methodID,jtags);
-		cpp_filteredTags = JPushUtil::getStdStringSet(filteredTags);
+		cpp_filteredTags = JPushUtil::getStdStringSet(tags,filteredTags);
+		SAFE_RELEASE_JOBJ(jtags);
+		SAFE_RELEASE_JOBJ(filteredTags)
 	}
 	return cpp_filteredTags;
 }

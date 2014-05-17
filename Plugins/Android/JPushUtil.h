@@ -24,7 +24,7 @@ public:
 	static jobject getJinteger(int value);
 	static jobject getJstringSet(std::set<std::string> *stdSet);
 	static jobject getJintSet(std::set<int> *stdSet);
-	static std::set<std::string> * getStdStringSet(jobject object);
+	static std::set<std::string> * getStdStringSet(std::set<std::string>*originalSet,jobject object);
 };
 
 #endif /* JPUSHUTIL_H_ */

@@ -148,7 +148,6 @@ void Register_callback(const char *registrationID) {
 
 
 ####1. 编译项目
-- 确保正确引用`Classes`、`cocos2dx`、`extensions`、`scripting` 四个文件夹（可通过右键点击文件夹，点击Properties，手动修改Resource下的Location引用）。
 - 确保正确添加`NDK_ROOT`环境变量，（可通过右键点击项目，点击Properties，手动在C/C++ Build目录中的Environment中添加）。
 - 编译项目，第一次编译目录中会增加 __libs__ 文件夹。
 
@@ -291,44 +290,46 @@ void Register_callback(const char *registrationID) {
 ####4. 添加代码
 添加获取Context代码,在游戏主Activity中加入如下代码：
 
-```
-	public static Context STATIC_REF = null;
-```
-
 ```	
-	@Override
-	public void onCreate(Bundle savedInstanceState) {
-    	super.onCreate(savedInstanceState);
-    	STATIC_REF = getApplicationContext();
-    //你的其他初始化代码
+	public static Context STATIC_REF = null;
+	
+    protected void onCreate(Bundle savedInstanceState){
+		super.onCreate(savedInstanceState);	
+		STATIC_REF = this.getApplicationContext();
 	}
+	
+	public static Context getContext(){
+        return STATIC_REF;
+    }
 ```
 
 修改JpushService.cpp
 
-	//修改为主Activity的名字，如com/JPush/mainActivity
-	const char* kActivityName = "Your Main Activity"; 
+	//修改为包名+主Activity的名字，如com/JPush/mainActivity	const char* kActivityName = "Your Main Activity"; 
+	
 	//将Yout Package Name 替换成你自己的包名如com/JPush/Excample
 	const char* kCallbackClassName = "Your Package Name/JPushCallbackHelper";
 
 修改jni 目录下的`main.cpp`,正确引用`JPushUtil.h`、`JPushInterface.h
 `,并添加以下方法
 
-	JNIEXPORT void JNICALL Java_Your Package Name_setAliasAndTagsCallback(JNIEnv *env,jclass,jlong func_handler,jint resultCode, jstring alias,jobject tags,jlong func_ptr){
+	JNIEXPORT void JNICALL Java_Your Package Name_JPushCallbackHelper_setAliasAndTagsCallback(JNIEnv *env,jclass,jlong func_handler,jint resultCode, jstring alias,jobject tags,jlong func_ptr){
 		int result = resultCode;
 		const char *c_alias;
 		if(alias!=NULL){
 			c_alias = env->GetStringUTFChars(alias, JNI_FALSE);
 		}
-		std::set<std::string> *c_tags = JPushUtil::getStdStringSet(tags);
+		std::set<std::string> *c_tags = JPushUtil::getStdStringSet(NULL,tags);
 		long callback_ptr = func_ptr;
 		long callback_handler = func_handler;
 		APTagAliasCallback callback = (APTagAliasCallback)callback_ptr;
 		void * p_handler = (void *)callback_handler;
 		callback(p_handler,result,c_alias,c_tags);
+
 		if(alias!=NULL){
 			env->ReleaseStringUTFChars(alias, c_alias);
 		}
+		delete(c_tags);
 	}
 	
 将Your Package Name替换成你自己的包名，如__com_Jpush_Excample__
