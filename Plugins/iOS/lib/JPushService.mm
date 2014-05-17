@@ -484,11 +484,19 @@ void JPushService::setAlias(void *p_handle, const char *alias,
  * TODO
  * delete ctags after you use this function it.
  */
-c_tags JPushService::filterValidTags(c_tags tags) {
+c_tags JPushService::filterValidTags(c_tags tags, set<string> *result) {
+  if (result == NULL) {
+    NSLog(@"Warning:the set you send to get filterValidTags is NULL!");
+    return NULL;
+  }
+  if (!result->empty()) {
+    NSLog(
+        @"Warning:You need to send a empty set to get filterValidTags result!");
+    return NULL;
+  }
   NSSet *vaildSet = [APService filterValidTags:convert_to_oc(tags)];
   c_tags ctags = new set<string>;
   convert_to_c(vaildSet, ctags);
-  //    delete_tags_convert(ctags);
   return ctags;
 }
 
