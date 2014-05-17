@@ -119,7 +119,6 @@ class JPushService {
 
   /**
    * 用于过滤出正确可用的tags，如果总数量超出最大限制则返回最大数量的靠前的可用tags
-   * 使用后记得删除tags防止内存泄漏.
    */
   static set<string> *filterValidTags(set<string> *tags, set<string> *result);
 

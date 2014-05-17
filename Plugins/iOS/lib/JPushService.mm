@@ -481,8 +481,6 @@ void JPushService::setAlias(void *p_handle, const char *alias,
 /*
  * this function used to check whether tags valid.
  *
- * TODO
- * delete ctags after you use this function it.
  */
 c_tags JPushService::filterValidTags(c_tags tags, set<string> *result) {
   if (result == NULL) {
