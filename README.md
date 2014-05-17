@@ -309,10 +309,11 @@ void Register_callback(const char *registrationID) {
 
 修改JpushService.cpp
 
-	//修改为包名+主Activity的名字，如com/JPush/mainActivity	const char* kActivityName = "Your Main Activity"; 
+	//修改为包名+主Activity的名字，如com/JPush/mainActivity
+		const char* kActivityName = "Your Main Activity"; 
 	
 	//将Yout Package Name 替换成你自己的包名如com/JPush/Excample
-	const char* kCallbackClassName = "Your Package Name/JPushCallbackHelper";
+		const char* kCallbackClassName = "Your Package Name/JPushCallbackHelper";
 
 修改jni 目录下的`main.cpp`,正确引用`JPushUtil.h`、`JPushInterface.h
 `,并添加以下方法
