@@ -84,7 +84,6 @@ const char *convert_to_c(NSString *oc_string) {
 void convert_to_c(NSSet *source_tags, set<string> *target_tags) {
   if (source_tags == nil) {
     target_tags = NULL;
-    source_tags = nil;
     return;
   }
   if (![source_tags count]) {
@@ -329,6 +328,10 @@ static void *setAliasTagsHandle = nil;
 - (void)tagsAliasCallback:(int)iResCode
                      tags:(NSSet *)tags
                     alias:(NSString *)alias {
+  if (tags == nil) {
+    _tagsAliasCallback(setAliasTagsHandle, iResCode, convert_to_c(alias), NULL);
+    return;
+  }
   c_tags ctags = new set<string>;
   convert_to_c(tags, ctags);
   _tagsAliasCallback(setAliasTagsHandle, iResCode, convert_to_c(alias), ctags);
