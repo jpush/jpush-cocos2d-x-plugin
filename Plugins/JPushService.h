@@ -111,8 +111,6 @@ class JPushService {
    * 设置标签和(或)别名（若参数为nil，则忽略；若是空对象，则清空；详情请参考文档：http://docs.jpush.cn/pages/viewpage.action?pageId=3309913）
    */
   static void setAliasAndTags(void *p_handle, const char *alias,
-                              set<string> *tags);
-  static void setAliasAndTags(void *p_handle, const char *alias,
                               set<string> *tags, APTagAliasCallback callback);
   static void setAlias(void *p_handle, const char *alias,
                        APTagAliasCallback callback);
@@ -121,9 +119,8 @@ class JPushService {
 
   /**
    * 用于过滤出正确可用的tags，如果总数量超出最大限制则返回最大数量的靠前的可用tags
-   * 使用后记得删除tags防止内存泄漏.
    */
-  static set<string> *filterValidTags(set<string> *tags);
+  static set<string> *filterValidTags(set<string> *tags, set<string> *result);
 
   /**
    *  get RegistrationID
