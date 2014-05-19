@@ -120,7 +120,7 @@ class JPushService {
   /**
    * 用于过滤出正确可用的tags，如果总数量超出最大限制则返回最大数量的靠前的可用tags
    */
-  void set<string> *filterValidTags(set<string> *tags, set<string> *result);
+  BOOL filterValidTags(set<string> *tags, set<string> *result);
 
   /**
    *  get RegistrationID
