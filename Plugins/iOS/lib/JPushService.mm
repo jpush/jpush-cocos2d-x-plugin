@@ -489,7 +489,7 @@ void JPushService::setAlias(void *p_handle, const char *alias,
  * this function used to check whether tags valid.
  *
  */
-BOOL JPushService::filterValidTags(c_tags tags, set<string> *result) {
+bool JPushService::filterValidTags(c_tags tags, set<string> *result) {
   if (result == NULL) {
     NSLog(@"Warning:the set you send to get filterValidTags is NULL!");
     return FALSE;
