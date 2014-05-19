@@ -82,14 +82,17 @@ const char *convert_to_c(NSString *oc_string) {
  *  @param target_tags C plus plus std:set
  */
 void convert_to_c(NSSet *source_tags, set<string> *target_tags) {
-  if (![source_tags count]) {
+  if (source_tags == nil) {
     target_tags = NULL;
+    return;
+  }
+  if (![source_tags count]) {
+    source_tags = nil;
+    return;
   }
   for (NSString *oc_string in source_tags) {
     string c_string = convert_string_to_c(oc_string);
     target_tags->insert(c_string);
-  }
-  if (target_tags->empty()) {
   }
   source_tags = nil;
 }
@@ -325,6 +328,10 @@ static void *setAliasTagsHandle = nil;
 - (void)tagsAliasCallback:(int)iResCode
                      tags:(NSSet *)tags
                     alias:(NSString *)alias {
+  if (tags == nil) {
+    _tagsAliasCallback(setAliasTagsHandle, iResCode, convert_to_c(alias), NULL);
+    return;
+  }
   c_tags ctags = new set<string>;
   convert_to_c(tags, ctags);
   _tagsAliasCallback(setAliasTagsHandle, iResCode, convert_to_c(alias), ctags);
@@ -482,20 +489,20 @@ void JPushService::setAlias(void *p_handle, const char *alias,
  * this function used to check whether tags valid.
  *
  */
-c_tags JPushService::filterValidTags(c_tags tags, set<string> *result) {
+BOOL JPushService::filterValidTags(c_tags tags, set<string> *result) {
   if (result == NULL) {
     NSLog(@"Warning:the set you send to get filterValidTags is NULL!");
-    return NULL;
+    return FALSE;
   }
   if (!result->empty()) {
     NSLog(
         @"Warning:You need to send a empty set to get filterValidTags result!");
-    return NULL;
+    result->clear();
   }
   NSSet *vaildSet = [APService filterValidTags:convert_to_oc(tags)];
   c_tags ctags = new set<string>;
   convert_to_c(vaildSet, ctags);
-  return ctags;
+  return TRUE;
 }
 
 /**
