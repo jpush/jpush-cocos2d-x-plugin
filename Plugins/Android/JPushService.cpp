@@ -218,25 +218,27 @@ void JPushService::setTags(void* p_handle,set<string> *tags, APTagAliasCallback 
 	}
 }
 
-set<string> * JPushService::filterValidTags(set<string> *tags){
-	if(tags == NULL){
-		return NULL;
-	}
-	JniMethodInfo t;
-	set<string> * cpp_filteredTags;
-	if ( JniHelper::getStaticMethodInfo(t
-								,kJPushClassName
-								,"filterValidTags"
-								,"(Ljava/util/Set;)Ljava/util/Set;" )){
-		jobject jtags = JPushUtil::getJstringSet(tags);
-		jobject filteredTags = t.env->CallStaticObjectMethod(t.classID,t.methodID,jtags);
-		cpp_filteredTags = JPushUtil::getStdStringSet(tags,filteredTags);
-		SAFE_RELEASE_JOBJ(jtags);
-		SAFE_RELEASE_JOBJ(filteredTags)
-	}
-	return cpp_filteredTags;
+bool JPushService::filterValidTags(set<string> *tags, set<string> *result){
+    if(tags == NULL){
+        return false;
+    }
+    if(result->empty()){
+        JniMethodInfo t;
+        set<string> * cpp_filteredTags;
+        if ( JniHelper::getStaticMethodInfo(t
+                                            ,kJPushClassName
+                                            ,"filterValidTags"
+                                            ,"(Ljava/util/Set;)Ljava/util/Set;" )){
+            jobject jtags = JPushUtil::getJstringSet(tags);
+            jobject filteredTags = t.env->CallStaticObjectMethod(t.classID,t.methodID,jtags);
+            cpp_filteredTags = JPushUtil::getStdStringSet(result,filteredTags);
+            SAFE_RELEASE_JOBJ(jtags);
+            SAFE_RELEASE_JOBJ(filteredTags)
+            return true;
+        }
+    }
+    return false;
 }
-
 
 const char * JPushService::registrationID(){
 	const char *ret = "";
