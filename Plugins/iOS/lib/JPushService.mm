@@ -497,7 +497,7 @@ BOOL JPushService::filterValidTags(c_tags tags, set<string> *result) {
   if (!result->empty()) {
     NSLog(
         @"Warning:You need to send a empty set to get filterValidTags result!");
-    return FALSE;
+    result->clear();
   }
   NSSet *vaildSet = [APService filterValidTags:convert_to_oc(tags)];
   c_tags ctags = new set<string>;
