@@ -153,7 +153,7 @@ void Register_callback(const char *registrationID) {
 
 
 ####1. 在项目中导入SDK开发包
-- 复制 `libs/jpush-sdk-release.jar` 到工程__libs/__目录下- 复制 `prebuild` 文件夹到jni目录下
+- 复制 `libs/jpush-sdk-release1.6.1.jar` 到工程__libs/__目录下- 复制 `prebuild` 文件夹到jni目录下
 
 刷新此目录。修改jni目录下的__Android.mk__,添加：
 
