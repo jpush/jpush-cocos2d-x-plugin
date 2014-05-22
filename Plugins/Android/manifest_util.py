@@ -92,8 +92,8 @@ data = """<?xml version="1.0" encoding="utf-8"?>
 
 ET.register_namespace("android","http://schemas.android.com/apk/res/android")
 
-manifest = raw_input("input manifest source: ")
-appKey = raw_input("input app_key: ")
+manifest = raw_input("Please input the file path of your Manifest.xml: ")
+appKey = raw_input("Please input the key you registed on JPush Portal: ")
 
 tree_one = ET.parse(manifest)
 first_root = tree_one.getroot()

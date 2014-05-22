@@ -5,7 +5,7 @@
  *      Author: john
  */
 
-#include <hellocpp/JpushUtil.h>
+#include <JpushUtil.h>
 #include <string>
 
 using namespace cocos2d;

@@ -83,8 +83,8 @@ class JPushService {
    *  get the UDID
    */
   static const char *openUDID();  // UDID
-
-#elif(CC_TARGET_PLATFORM == CC_PLATFORM_ANDROID)
+#endif
+#if(CC_TARGET_PLATFORM == CC_PLATFORM_ANDROID)
   //注册，推送
   static void init();
   static void setDebugMode(bool enable);
