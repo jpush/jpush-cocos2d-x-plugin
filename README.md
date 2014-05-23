@@ -314,10 +314,12 @@ void Register_callback(const char *registrationID) {
 	//将Yout Package Name 替换成你自己的包名如com/JPush/Excample
 		const char* kCallbackClassName = "Your Package Name/JPushCallbackHelper";
 
-修改jni 目录下的`main.cpp`,添加以下方法:
+修改jni 目录下的`main.cpp`,加入头文件:
 
 	#include "JPushUtil.h"
 	#include "JPushService.h"
+	
+在`extern C`括号中添加native回调方法：
 
 	JNIEXPORT void JNICALL Java_Your Package Name_JPushCallbackHelper_setAliasAndTagsCallback(JNIEnv *env,jclass,jlong func_handler,jint resultCode, jstring alias,jobject tags,jlong func_ptr){
 		int result = resultCode;
