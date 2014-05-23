@@ -199,7 +199,7 @@ void JPushService::setTags(void* p_handle,set<string> *tags, APTagAliasCallback 
 }
 
 bool JPushService::filterValidTags(set<string> *tags, set<string> *result){
-    if(tags == NULL){
+    if(tags == NULL||result == NULL){
         return false;
     }
     if(result->empty()){
