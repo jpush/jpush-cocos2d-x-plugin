@@ -323,7 +323,7 @@ void Register_callback(const char *registrationID) {
 
 	JNIEXPORT void JNICALL Java_Your Package Name_JPushCallbackHelper_setAliasAndTagsCallback(JNIEnv *env,jclass,jlong func_handler,jint resultCode, jstring alias,jobject tags,jlong func_ptr){
 		int result = resultCode;
-		const char *c_alias;
+		const char *c_alias = NULL;
 		if(alias!=NULL){
 			c_alias = env->GetStringUTFChars(alias, JNI_FALSE);
 		}
