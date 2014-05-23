@@ -160,8 +160,9 @@ void Register_callback(const char *registrationID) {
 		include $(LOCAL_PATH)/prebuild/Android.mk
 		LOCAL_SHARED_LIBRARIES := jpush_so
 
-- 将Plugins中的`JPushService.h`与Android目录下的`JPushService.cpp`、`JPushUtil.h` 、`JPushUtil.cpp` 拖入到工程中合适的位置，（`JPushService.h`放在C++环境下，其他三个文件放在JNI目录下）并修改你的工程makefile文件的`LOCAL_SRC_FILES`确保`JPushInterface.cpp`与`JPushUtil.cpp`能被顺利编译。
-- 修改`LOCAL_C_INCLUDES`确保`JPushService.h`能被其他源文件正确引用，并将`[COCOS2DX_ROOT]/cocos2dx/platform/android/jni`加入到`LOCAL_C_INCLUDES`之中确保`JniHelper.h`能被找到（`[COCOS2DX_ROOT]`修改为cocos2dx库的目录）。
+- 将Plugins中的`/JPushService.h`与Android目录下的`Android/JPushService.cpp`、`Android/JPushUtil.h` 、`Android/JPushUtil.cpp` 拖入到工程中合适的位置，（`JPushService.h`放Classes目录下，其他三个文件放在jni目录下）并修改Android.mk文件中的`LOCAL_SRC_FILES`确保`JPushInterface.cpp`与`JPushUtil.cpp`能被顺利编译。
+- 修改`LOCAL_C_INCLUDES`确保`JPushService.h`能被其他源文件正确引用，并将`$(LOCAL_PATH)/../../../../cocos2dx/platform/android/jni
+`加入到`LOCAL_C_INCLUDES`之中确保`JniHelper.h`能被找到。
 -  将`JPushCallbackHelper.java`放在`src`包名目录下。
 
 ####2. 配置 AndroidManifest.xml**3.1 使用脚本自动配置**
@@ -302,7 +303,7 @@ void Register_callback(const char *registrationID) {
 
     protected void onCreate(Bundle savedInstanceState){
 		super.onCreate(savedInstanceState);	
-		STATIC_REF = this.getApplicationContext();
+		STATIC_REF = this.getApplicationContext(); //request!
 	}
 
 修改JpushService.cpp
@@ -315,8 +316,8 @@ void Register_callback(const char *registrationID) {
 
 修改jni 目录下的`main.cpp`,添加以下方法:
 
-	#include JPushUtil.h
-	#include JPushInterface.h
+	#include "JPushUtil.h"
+	#include "JPushService.h"
 
 	JNIEXPORT void JNICALL Java_Your Package Name_JPushCallbackHelper_setAliasAndTagsCallback(JNIEnv *env,jclass,jlong func_handler,jint resultCode, jstring alias,jobject tags,jlong func_ptr){
 		int result = resultCode;

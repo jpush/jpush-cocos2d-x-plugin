@@ -233,7 +233,6 @@ const char * JPushService::registrationID(){
 		if(j_string!=NULL){
 			string c_string = JniHelper::jstring2string(j_string);
 		    ret = c_string.c_str();
-		    CCLog("registrationid:%s",ret);
 		}
 		SAFE_RELEASE_JCONTEXT(ctx);
 		SAFE_RELEASE_JOBJ(t.classID);
