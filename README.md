@@ -64,29 +64,27 @@ APS_FOR_PRODUCTION
                                                 UIRemoteNotificationTypeSound |
                                                 UIRemoteNotificationTypeAlert];
   // Required
-          [APService setupWithOption:launchOptions];
-          ......
-          return YES;
+  [APService setupWithOption:launchOptions];
+   ......
+  return YES;
  }
 ```
 ```
-  	- (void)application:(UIApplication *)application 	didRegisterForRemoteNotificationsWithDeviceToken:(NSData *)deviceToken {
-      		// Required
-      		[APService registerDeviceToken:deviceToken];
-  		}
+ - (void)application:(UIApplication *)application didRegisterForRemoteNotificationsWithDeviceToken:(NSData           *)deviceToken {
+  // Required
+  [APService registerDeviceToken:deviceToken];
+  }
 ```
 ```	
- 	 - (void)application:(UIApplication *)application 	didReceiveRemoteNotification:(NSDictionary *)userInfo {
-     	 // Required
-     	 [APService handleRemoteNotification:userInfo];
- 	 }
+ - (void)application:(UIApplication *)application didReceiveRemoteNotification:(NSDictionary *)userInfo {
+  // Required
+  [APService handleRemoteNotification:userInfo];
+  }
 ```
 ```
-    //IOS7 only
-	- (void)application:(UIApplication *)application
-      didReceiveRemoteNotification:(NSDictionary *)userInfo
-          fetchCompletionHandler:
-              (void (^)(UIBackgroundFetchResult))completionHandler {
+  //IOS7 only
+  - (void)application:(UIApplication *)application didReceiveRemoteNotification:(NSDictionary *)userInfo
+    fetchCompletionHandler:(void (^)(UIBackgroundFetchResult))completionHandler {
   [APService handleRemoteNotification:userInfo];
   completionHandler(UIBackgroundFetchResultNewData);
 }
