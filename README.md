@@ -23,12 +23,12 @@ SystemConfiguration.framework
 * 创建并配置PushConfig.plist文件
 在你的工程中创建一个新的Property List文件，并将其命名为PushConfig.plist，填入Portal为你的应用提供的APP_KEY等参数。
 
-	CHANNEL
+CHANNEL
 指明应用程序包的下载渠道，为方便分渠道统计。根据你的需求自行定义即可。
 APP_KEY
 在管理Portal上创建应用时自动生成的（AppKey）用以标识该应用。请确保应用内配置的 AppKey 与第1步在 Portal 上创建应用时生成的 AppKey 一致，AppKey 可以在应用详情中查询。
 
-	APS_FOR_PRODUCTION
+APS_FOR_PRODUCTION
 表示应用是否采用生产证书发布( Ad_Hoc 或 APP Store )，0 (默认值)表示采用的是开发者证书，1 表示采用生产证书发布应用。请注意此处配置与 Web Portal 应用环境设置匹配。
 
 ```
@@ -44,7 +44,7 @@ APP_KEY
 
 * 在XCode中选择“Add files to 'Your project name'...”，将lib子文件夹中的libPushSDK.a添加到你的工程目录中。
   
-*  将Plugins/iOS/lib 文件夹下的 APServer.h，APServiceCpp.h,APServiceCpp.mm拖入 project 中(或者点击右键，点击 add files to "project name")，APServer.h拖入Class文件夹中,和安卓共享同一个，APServiceCpp.h,APServiceCpp.mm拖入ios文件夹下.
+*  将Plugins/iOS/lib 文件夹下的 APServer.h，APServiceCpp.h,APServiceCpp.mm拖入iOS项目工程中，APServer.h拖入Class文件夹中,和安卓共享同一个，APServiceCpp.h,APServiceCpp.mm拖入ios文件夹下.
 
 * 在ios/AppController.mm(注意不是AppDelegate.cpp) 中添加头文件APService.h
 
@@ -78,7 +78,7 @@ APP_KEY
 ```	
  	 - (void)application:(UIApplication *)application 	didReceiveRemoteNotification:(NSDictionary *)userInfo {
      	 // Required
-     	 [APService registerDeviceToken:deviceToken];
+     	 [APService handleRemoteNotification:userInfo];
  	 }
 ```
 ```
@@ -122,6 +122,13 @@ void setupCallback() { cout << "setup" << endl; }
 JPushService::setAliasAndTags("别名1", tags1, tagsAliasCallback);
 
 ```
+*Tags过滤方法：需要传入一个result指针用以获取过滤后的Tags.
+  如果过滤成功，返回TRUE，否则返回FALSE.
+
+```
+bool filterValidTags(set<string> *tags, set<string> *result);
+```
+
 * tagsAliasCallback要符合头文件的函数指针
 
 ```
