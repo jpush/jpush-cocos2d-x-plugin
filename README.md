@@ -44,7 +44,7 @@ APS_FOR_PRODUCTION
 
 * 在XCode中选择“Add files to 'Your project name'...”，将lib子文件夹中的libPushSDK.a添加到你的工程目录中。
   
-*  将Plugins/iOS/lib 文件夹下的 APServer.h，APServiceCpp.h,APServiceCpp.mm拖入iOS项目工程中，APServer.h拖入Class文件夹中,和安卓共享同一个，APServiceCpp.h,APServiceCpp.mm拖入ios文件夹下.
+*  将Plugins/iOS/lib 文件夹下的 APServer.h，JPushService.h,JPushService.mm拖入iOS项目工程中:将JPushService.h拖入Class文件夹中,和安卓共享同一个。接着将APServer.h,JPushService.mm拖入ios文件夹下.
 
 * 在ios/AppController.mm(注意不是AppDelegate.cpp) 中添加头文件APService.h
 
@@ -113,6 +113,7 @@ JPushService::registerCallbackFunction(setupCallback, closeCallback,
 *  API参数要符合头文件提供的函数指针
 
 ```
+例:
 void setupCallback() { cout << "setup" << endl; }
 ```
 
@@ -132,6 +133,7 @@ bool filterValidTags(set<string> *tags, set<string> *result);
 * tagsAliasCallback要符合头文件的函数指针
 
 ```
+例:
 void tagsAliasCallback(int responseCode, const char *alias, c_tags tags) {
   set<string>::iterator it = tags->begin();
   for (; it != tags->end(); ++it) {
@@ -147,6 +149,7 @@ void tagsAliasCallback(int responseCode, const char *alias, c_tags tags) {
 * 获取RegistrationID
 
 ```
+例:
 void Register_callback(const char *registrationID) {
   cout << "registration:" << registrationID << endl;
 }
