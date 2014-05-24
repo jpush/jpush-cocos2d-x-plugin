@@ -100,7 +100,7 @@ JPushService::registerCallbackFunction(setupCallback, closeCallback,
                                          Register_callback, Login_callback,
                                          ReceiveMessage_callback);
 ```
-* * 或者你也可以分别调用每一个回调函数的设置API方法
+*  或者你也可以分别调用每一个回调函数的设置API方法
 
 ```
   static void registerSetupCallbackFunction(setupCallback);
@@ -110,7 +110,7 @@ JPushService::registerCallbackFunction(setupCallback, closeCallback,
   static void registerCallbackFunction(ReceiveMessage_callback);
 ```
 
-* * API参数要符合头文件提供的函数指针
+*  API参数要符合头文件提供的函数指针
 
 ```
 void setupCallback() { cout << "setup" << endl; }
@@ -122,7 +122,7 @@ void setupCallback() { cout << "setup" << endl; }
 JPushService::setAliasAndTags("别名1", tags1, tagsAliasCallback);
 
 ```
-* * tagsAliasCallback要符合头文件的函数指针
+* tagsAliasCallback要符合头文件的函数指针
 
 ```
 void tagsAliasCallback(int responseCode, const char *alias, c_tags tags) {
@@ -145,7 +145,6 @@ void Register_callback(const char *registrationID) {
 }
 ```
 
-#### ##注意事项:在用filterValidTags函数之后，记得将返回的函数指针释放！
 
 ---------------------------------------------------------------------------
 ## 集成 JPush Cocos2d-x Android SDK
@@ -156,7 +155,8 @@ void Register_callback(const char *registrationID) {
 - 编译项目，第一次编译目录中会增加 __libs__ 文件夹。
 
 ####2. 在项目中导入SDK开发包
-- 复制 `libs/jpush-sdk-release.jar` 到工程__libs/__目录下- 复制 `prebuild` 文件夹到jni目录下
+- 复制 `libs/jpush-sdk-release.jar` 到工程__libs/__目录下
+- 复制 `prebuild` 文件夹到jni目录下
 
 刷新此目录。修改jni目录下的__Android.mk__,添加：
 
@@ -166,7 +166,10 @@ void Register_callback(const char *registrationID) {
 - 将`JPushService.h`、`JPushService.cpp`、`JPushUtil.h` 、`JPushUtil.cpp` 拖入到工程中合适的位置，（`JPushService.h`放在C++环境下，其他三个文件放在JNI目录下）并修改你的工程makefile文件的`LOCAL_SRC_FILES`确保`JPushInterface.cpp`与`JPushUtil.cpp`能被顺利编译。修改`LOCAL_C_INCLUDES`确保`JPushService.h`能被其他源文件正确引用，并将`[COCOS2DX_ROOT]/cocos2dx/platform/android/jni`加入到`LOCAL_C_INCLUDES`之中确保`JniHelper.h`能被找到（`[COCOS2DX_ROOT]`修改为cocos2dx库的目录）。
 -  将`JPushCallbackHelper.java`放在`src`目录下。
 
-####3. 配置 AndroidManifest.xml**3.1 使用脚本自动配置**
+####3. 配置 AndroidManifest.xml
+
+
+**3.1 使用脚本自动配置**
 
 运行manifest_util.py
 	
@@ -184,8 +187,13 @@ void Register_callback(const char *registrationID) {
     <uses-permission android:name="android.permission.CHANGE_NETWORK_STATE" />
 
 **3.2手动配置**
-	根据 SDK 压缩包里的 AndroidManifest.xml 样例文件,来配置应用程序项目的 AndroidManifest.xml 。主要步骤为:	
-1. 复制备注为 "Required" 的部分2. 将备注为替换包名的部分,替换为当前应用程序的包名3. 将AppKey替换为在Portal上注册该应用的的Key,例如(9fed5bcb7b9b87413678c407)
+	
+根据 SDK 压缩包里的 AndroidManifest.xml 样例文件,来配置应用程序项目的 AndroidManifest.xml 。
+主要步骤为:	
+
+1. 复制备注为 "Required" 的部分
+2. 将备注为替换包名的部分,替换为当前应用程序的包名
+3. 将AppKey替换为在Portal上注册该应用的的Key,例如(9fed5bcb7b9b87413678c407)
 
 		<!-- Required -->
 		<permission android:name="Your Package Name.permission.JPUSH_MESSAGE" 
@@ -353,13 +361,27 @@ JPush SDK 提供的 API 接口,都主要集中在 JpushService.h 类里。只需
 	   
 就可以使用推送消息了。
 	    
-####6. 测试确认1. 确认所需的权限都已经添加。如果必须的权限未添加,日志会提示错误。2. 确认 AppKey(在Portal上生成的)已经正确的写入 Androidmanifest.xml 。
-3. 确认在程序启动时候调用了init(context) 接口4. 确认测试手机(或者模拟器)已成功连入网络客户端调用 init 后不久,如果一切正常,应有登录成功的日志信息5. 启动应用程序,在 Portal 上向应用程序发送自定义消息或者通知栏提示。详情请参考管理Portal。在几秒内,客户端应可收到下发的通知或者正定义消息.
-高级功能 请参考:[标签与别名API]()
+####6. 测试确认
+1. 确认所需的权限都已经添加。如果必须的权限未添加,日志会提示错误。
+2. 确认 AppKey(在Portal上生成的)已经正确的写入 Androidmanifest.xml 。
+3. 确认在程序启动时候调用了init(context) 接口
+4. 确认测试手机(或者模拟器)已成功连入网络
+客户端调用 init 后不久,如果一切正常,应有登录成功的日志信息
+5. 启动应用程序,在 Portal 上向应用程序发送自定义消息或者通知栏提示。详情请参考管理Portal。
+在几秒内,客户端应可收到下发的通知或者正定义消息.
+
+
+高级功能 请参考:
+[标签与别名API]()
 [接收推送消息]()
-技术支持
-邮件联系: support@jpush.cn 
-技术QQ群:132992583
+
+技术支持
+
+
+邮件联系: support@jpush.cn 
+
+
+技术QQ群:132992583
 
 
 
