@@ -122,7 +122,7 @@ void setupCallback() { cout << "setup" << endl; }
 JPushService::setAliasAndTags("别名1", tags1, tagsAliasCallback);
 
 ```
-*Tags过滤方法：需要传入一个result指针用以获取过滤后的Tags.
+* Tags过滤方法：需要传入一个result指针用以获取过滤后的Tags.
   如果过滤成功，返回TRUE，否则返回FALSE.
 
 ```
