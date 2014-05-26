@@ -224,26 +224,6 @@ bool JPushService::isPushStopped(){
     return isStopped;
 }
 
-void JPushService::setAliasAndTags(const char *alias, set<string> *tags){
-    JniMethodInfo t;
-    if ( JniHelper::getStaticMethodInfo(t
-                                        ,kJPushClassName
-                                        ,"setAliasAndTags"
-                                        ,"(Landroid/content/Context;Ljava/lang/String;Ljava/util/HashSet;)V")){
-        
-        jstring jalias = GET_JSTRING(alias);
-        jobject ctx = getContext();
-        jobject jtags = getJstringSet(tags);
-        t.env->CallStaticVoidMethod(t.classID,t.methodID,ctx,jalias,jtags);
-        SAFE_RELEASE_JCONTEXT(ctx);
-        SAFE_RELEASE_JOBJ(jalias);
-        SAFE_RELEASE_JOBJ(jtags);
-        SAFE_RELEASE_JOBJ(t.classID);
-        
-    }
-    
-}
-
 jobject getCallbackHelperObject(){
     JniMethodInfo t;
     jobject callback = NULL;
