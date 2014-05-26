@@ -160,7 +160,7 @@ void Register_callback(const char *registrationID) {
 		include $(LOCAL_PATH)/prebuild/Android.mk
 		LOCAL_SHARED_LIBRARIES := jpush_so
 
-- 将Plugins中的`/JPushService.h`与Android目录下的`Android/JPushService.cpp`、`Android/JPushUtil.h` 、`Android/JPushUtil.cpp` 拖入到工程中合适的位置，（`JPushService.h`放Classes目录下，其他三个文件放在jni目录下）并修改Android.mk文件中的`LOCAL_SRC_FILES`确保`JPushInterface.cpp`与`JPushUtil.cpp`能被顺利编译。
+- 将Plugins中的`/JPushService.h`与Android目录下的`Android/JPushService.cpp`、拖入到工程中合适的位置，（`JPushService.h`放Classes目录下，`JPushService.cpp`放在jni目录下）并修改Android.mk文件中的`LOCAL_SRC_FILES`确保`JPushService.cpp`能被顺利编译。
 - 修改`LOCAL_C_INCLUDES`确保`JPushService.h`能被其他源文件正确引用，并将`$(LOCAL_PATH)/../../../../cocos2dx/platform/android/jni
 `加入到`LOCAL_C_INCLUDES`之中确保`JniHelper.h`能被找到。
 -  将`JPushCallbackHelper.java`放在`src`包名目录下。
@@ -314,33 +314,8 @@ void Register_callback(const char *registrationID) {
 	//将Yout Package Name 替换成你自己的包名如com/JPush/Excample
 		const char* kCallbackClassName = "Your Package Name/JPushCallbackHelper";
 
-修改jni 目录下的`main.cpp`,加入头文件:
 
-	#include "JPushUtil.h"
-	#include "JPushService.h"
-	
-在`extern C`括号中添加native回调方法：
-
-	JNIEXPORT void JNICALL Java_Your Package Name_JPushCallbackHelper_setAliasAndTagsCallback(JNIEnv *env,jclass,jlong func_handler,jint resultCode, jstring alias,jobject tags,jlong func_ptr){
-		int result = resultCode;
-		const char *c_alias = NULL;
-		if(alias!=NULL){
-			c_alias = env->GetStringUTFChars(alias, JNI_FALSE);
-		}
-		std::set<std::string> *c_tags = JPushUtil::getStdStringSet(NULL,tags);
-		long callback_ptr = func_ptr;
-		long callback_handler = func_handler;
-		APTagAliasCallback callback = (APTagAliasCallback)callback_ptr;
-		void * p_handler = (void *)callback_handler;
-		callback(p_handler,result,c_alias,c_tags);
-
-		if(alias!=NULL){
-			env->ReleaseStringUTFChars(alias, c_alias);
-		}
-		delete(c_tags);
-	}
-	
-将Your Package Name替换成你自己的包名，如__com_Jpush_Excample__
+	将方法中得Your Package Name替换成你自己的包名，如__com_JPush_Excample__
 
 ####5. 终于可以用了
 JPush SDK 提供的 API 接口,都主要集中在 JpushService.h 类里。只需要在第一个游戏场景中：
