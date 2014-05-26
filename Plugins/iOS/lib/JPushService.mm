@@ -97,94 +97,96 @@ void convert_to_c(NSSet *source_tags, set<string> *target_tags) {
   source_tags = nil;
 }
 
-/**
- *  analyse message extras value.
- *  notification message has two key:content & extras.
- *  extras key is used to contains all customise key-value.
- *  this function is used to get all key-value from message into
- *  NSDictionary(Objective C object)
- *
- *  @param extra      extras message(NSDictionary)
- *  @param extra_map  extras message(std:map)
- */
-void analyse_extra(NSDictionary *extra, message extra_map) {
-  for (NSString *key in [extra allKeys]) {
-    NSString *value = extra[key];
-    if (![value isKindOfClass:[NSString class]]) {
-      return;
-    }
-    string *str_value = new string([value UTF8String]);
-    extra_map->insert(
-        pair<string, void *>([key UTF8String], static_cast<void *>(str_value)));
-  }
-}
+#pragma mark - transfer message to Map (DEPRECATED）
+///**
+// *  analyse message extras value.
+// *  notification message has two key:content & extras.
+// *  extras key is used to contains all customise key-value.
+// *  this function is used to get all key-value from message into
+// *  NSDictionary(Objective C object)
+// *
+// *  @param extra      extras message(NSDictionary)
+// *  @param extra_map  extras message(std:map)
+// */
+// void analyse_extra(NSDictionary *extra, message extra_map) {
+//  for (NSString *key in [extra allKeys]) {
+//    NSString *value = extra[key];
+//    if (![value isKindOfClass:[NSString class]]) {
+//      return;
+//    }
+//    string *str_value = new string([value UTF8String]);
+//    extra_map->insert(
+//        pair<string, void *>([key UTF8String], static_cast<void
+// *>(str_value)));
+//  }
+//}
 
-/**
- *  transfer NSDictionary to map<string,void>
- *
- *  @param oc_map  Received message(NSDictionary)
- *  @param result  Received message(std:map)
- */
-void convert_map_to_c(NSDictionary *oc_map, message result) {
-  NSArray *keys = [oc_map allKeys];
-  for (NSString *key in keys) {
-    if (![key isEqualToString:@"extras"]) {
-      NSString *value = [oc_map objectForKey:key];
-      string *str_value = new string([value UTF8String]);
-      result->insert(pair<string, void *>([key UTF8String],
-                                          static_cast<void *>(str_value)));
-      continue;
-    } else {
-      // if no extras, set extras value equals ''
-      if (![oc_map objectForKey:key]) {
-      }
-      // get all extras key-value
-      map<string, void *> *map_value = new map<string, void *>;
-      analyse_extra(oc_map[key], map_value);
-      result->insert(pair<string, void *>([key UTF8String],
-                                          static_cast<void *>(map_value)));
-      continue;
-    }
-  }
-}
-
-/**
- *  delete map after send to API function.
- *  this function used to delete All message map pointers
- *  (include string pointer) which generate when change NSDictionary
- *  (Objecive C object from OC API) to map after send to callback
- *  function
- *
- *  @param message   received message(std:map)
- */
-void delete_receive_message(map<string, void *> *message) {
-  // delete
-  map<string, void *>::iterator it = message->begin();
-  for (; it != message->end(); ++it) {
-    if ((it->first).compare("extras") == 0) {
-      // delete extra value map and all value string.
-      map<string, void *> *extra_map = (map<string, void *> *)it->second;
-      map<string, void *>::iterator it = extra_map->begin();
-      for (; it != extra_map->end(); ++it) {
-        string *extra_value = (string *)it->second;
-        if (extra_value->empty()) {
-          continue;
-        }
-        delete extra_value;
-      }
-      delete extra_map;
-    } else {
-      // delete other value string
-      string *value = (string *)it->second;
-      if (value->empty()) {
-        continue;
-      }
-      delete value;
-    }
-  }
-  // delete message map
-  delete message;
-}
+///**
+// *  transfer NSDictionary to map<string,void>
+// *
+// *  @param oc_map  Received message(NSDictionary)
+// *  @param result  Received message(std:map)
+// */
+// void convert_map_to_c(NSDictionary *oc_map, message result) {
+//  NSArray *keys = [oc_map allKeys];
+//  for (NSString *key in keys) {
+//    if (![key isEqualToString:@"extras"]) {
+//      NSString *value = [oc_map objectForKey:key];
+//      string *str_value = new string([value UTF8String]);
+//      result->insert(pair<string, void *>([key UTF8String],
+//                                          static_cast<void *>(str_value)));
+//      continue;
+//    } else {
+//      // if no extras, set extras value equals ''
+//      if (![oc_map objectForKey:key]) {
+//      }
+//      // get all extras key-value
+//      map<string, void *> *map_value = new map<string, void *>;
+//      analyse_extra(oc_map[key], map_value);
+//      result->insert(pair<string, void *>([key UTF8String],
+//                                          static_cast<void *>(map_value)));
+//      continue;
+//    }
+//  }
+//}
+//
+///**
+// *  delete map after send to API function.
+// *  this function used to delete All message map pointers
+// *  (include string pointer) which generate when change NSDictionary
+// *  (Objecive C object from OC API) to map after send to callback
+// *  function
+// *
+// *  @param message   received message(std:map)
+// */
+// void delete_receive_message(map<string, void *> *message) {
+//  // delete
+//  map<string, void *>::iterator it = message->begin();
+//  for (; it != message->end(); ++it) {
+//    if ((it->first).compare("extras") == 0) {
+//      // delete extra value map and all value string.
+//      map<string, void *> *extra_map = (map<string, void *> *)it->second;
+//      map<string, void *>::iterator it = extra_map->begin();
+//      for (; it != extra_map->end(); ++it) {
+//        string *extra_value = (string *)it->second;
+//        if (extra_value->empty()) {
+//          continue;
+//        }
+//        delete extra_value;
+//      }
+//      delete extra_map;
+//    } else {
+//      // delete other value string
+//      string *value = (string *)it->second;
+//      if (value->empty()) {
+//        continue;
+//      }
+//      delete value;
+//    }
+//  }
+//  // delete message map
+//  delete message;
+//}
 
 /**
  *  delete tags
@@ -372,10 +374,20 @@ static void *setAliasTagsHandle = nil;
   if (_receiveMessageCallback == NULL) {
     return;
   }
-  map<string, void *> *result = new map<string, void *>;
-  convert_map_to_c([notification userInfo], result);
+  const char *result;
+  NSError *error = nil;
+  NSData *jsonData =
+      [NSJSONSerialization dataWithJSONObject:[notification userInfo]
+                                      options:NSJSONWritingPrettyPrinted
+                                        error:&error];
+  if ([jsonData length] > 0 && error == nil) {
+    NSString *jsonString =
+        [[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEncoding];
+    result = [jsonString UTF8String];
+  } else {
+    result = NULL;
+  }
   _receiveMessageCallback(receiveMessageHandle, result);
-  delete_receive_message(result);
 }
 @end
 
@@ -396,13 +408,11 @@ void JPushService::registerCallbackFunction(
     void *p_handle, APNetworkDidSetup_callback setup_callback,
     APNetworkDidClose_callback close_callback,
     APNetworkDidRegister_callback register_callback,
-    APNetworkDidLogin_callback login_callback,
-    APNetworkDidReceiveMessage_callback message_callback) {
+    APNetworkDidLogin_callback login_callback) {
   callbackController.setupCallback = setup_callback;
   callbackController.closeCallback = close_callback;
   callbackController.registerCallback = register_callback;
   callbackController.loginCallback = login_callback;
-  callbackController.receiveMessageCallback = message_callback;
   /**
    *  set callback handle.
    */
