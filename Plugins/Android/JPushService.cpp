@@ -292,16 +292,16 @@ void JPushService::setPushTime(set<int> *weekDays, int startHour, int endHour){
 void JPushService::setSilenceTime(int startHour, int startMinute, int endHour, int endMinute){
 	JniMethodInfo t;
 	if (JniHelper::getStaticMethodInfo(t
-								,kJPushClassName
-								,"setSilenceTime"
-								,"(Landroid/content/Context;IIII)V"))
+                                       ,kJPushClassName
+                                       ,"setSilenceTime"
+                                       ,"(Landroid/content/Context;IIII)V"))
 	{
 		jobject ctx = getContext();
-		jint startHour = startHour;
-		jint startMinute = startMinute;
-		jint endHour = endHour;
-		jint endMinute = endMinute;
-		t.env->CallStaticVoidMethod(t.classID,t.methodID,ctx,startHour,startMinute,endHour,endMinute);
+		jint j_startHour = startHour;
+		jint j_startMinute = startMinute;
+		jint j_endHour = endHour;
+		jint j_endMinute = endMinute;
+		t.env->CallStaticVoidMethod(t.classID,t.methodID,ctx,j_startHour,j_startMinute,j_endHour,j_endMinute);
 		SAFE_RELEASE_JCONTEXT(ctx);
 		SAFE_RELEASE_JOBJ(t.classID);
 	}
