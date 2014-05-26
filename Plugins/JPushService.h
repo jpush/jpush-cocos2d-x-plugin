@@ -12,9 +12,10 @@
 #include <set>
 using namespace std;
 
+typedef void (*APNetworkDidReceiveMessage_callback)(void *p_handle,
+                                                    const char *message);
 #if (CC_TARGET_PLATFORM == CC_PLATFORM_IOS)
 typedef set<string> *c_tags;
-typedef map<string, void *> *message;
 /*
  *  IOS回调函数标准格式(传给SDK用来回调）
  */
@@ -23,8 +24,6 @@ typedef void (*APNetworkDidClose_callback)(void *p_handle);
 typedef void (*APNetworkDidRegister_callback)(void *p_handle,
                                               const char *registrationID);
 typedef void (*APNetworkDidLogin_callback)(void *p_handle);
-typedef void (*APNetworkDidReceiveMessage_callback)(
-    void *p_handle, map<string, void *> *message);
 #endif
 
 typedef void (*APTagAliasCallback)(void *p_handle, int responseCode,
@@ -45,8 +44,7 @@ class JPushService {
       void *p_handle, APNetworkDidSetup_callback setup_callback,
       APNetworkDidClose_callback close_callback,
       APNetworkDidRegister_callback register_callback,
-      APNetworkDidLogin_callback login_callback,
-      APNetworkDidReceiveMessage_callback message_callback);
+      APNetworkDidLogin_callback login_callback);
 
   /*
    *   设置SDK常用的回调函数(分别在需要地方调用每个回调接口）:
@@ -64,9 +62,6 @@ class JPushService {
       void *p_handle, APNetworkDidRegister_callback register_callback);
   static void registerLoginCallbackFunction(
       void *p_handle, APNetworkDidLogin_callback login_callback);
-  static void registerCallbackFunction(
-      void *p_handle, APNetworkDidReceiveMessage_callback message_callback);
-
   /**
    *  记录页面停留时间功能。
    *  pageStart和pageEnd为自动计算停留时间
@@ -83,8 +78,8 @@ class JPushService {
    *  get the UDID
    */
   static const char *openUDID();  // UDID
-#endif
-#if(CC_TARGET_PLATFORM == CC_PLATFORM_ANDROID)
+
+#elif(CC_TARGET_PLATFORM == CC_PLATFORM_ANDROID)
   //注册，推送
   static void init();
   static void setDebugMode(bool enable);
@@ -103,7 +98,11 @@ class JPushService {
   //设置保留最近通知条数 API
   static void setLatestNotifactionNumber(int maxNum);
 #endif
-
+  /**
+   *  获取收到消息(Jpush服务器)
+   */
+  static void registerCallbackFunction(
+      void *p_handle, APNetworkDidReceiveMessage_callback message_callback);
   /**
    *  Tags & Alias
    *
@@ -120,7 +119,7 @@ class JPushService {
   /**
    * 用于过滤出正确可用的tags，如果总数量超出最大限制则返回最大数量的靠前的可用tags
    */
-  static bool filterValidTags(set<string> *tags, set<string> *result);
+  bool filterValidTags(set<string> *tags, set<string> *result);
 
   /**
    *  get RegistrationID
