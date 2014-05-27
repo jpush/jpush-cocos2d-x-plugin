@@ -49,35 +49,39 @@ JPush's officially supported Cocos2d-x plugin (Android &amp; iOS). 极光推送�
 * 在 AppController.mm 中添加监听系统事件，相应地调用 JPush SDK 提供的 API 来实现功能
 
 	```
-		- (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions{
-			// Required
-			[APService registerForRemoteNotificationTypes:UIRemoteNotificationTypeBadge |UIRemoteNotificationTypeSound |UIRemoteNotificationTypeAlert];
-			// Required
-     		[APService setupWithOption:launchOptions];
-    	     ......
-	       return YES;
-		}
+	- (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions{
+		
+		
+		// Required
+		[APService registerForRemoteNotificationTypes:UIRemoteNotificationTypeBadge |
+									UIRemoteNotificationTypeSound | 
+									UIRemoteNotificationTypeAlert];
+		// Required
+     	[APService setupWithOption:launchOptions];
+    	......
+	    return YES;
+	}
 	```
 	```
-		- (void)application:(UIApplication *)application 		didRegisterForRemoteNotificationsWithDeviceToken:(NSData *)deviceToken{
-		    // Required
-		 	[APService registerDeviceToken:deviceToken];
-		}
+	- (void)application:(UIApplication *)application 		didRegisterForRemoteNotificationsWithDeviceToken:(NSData *)deviceToken{
+		// Required
+		[APService registerDeviceToken:deviceToken];
+	}
 	```
 	```	
-		- (void)application:(UIApplication *)application 		didReceiveRemoteNotification:(NSDictionary *)userInfo {
-	  		// Required
-	 		[APService registerDeviceToken:deviceToken];
-	 	}
+	- (void)application:(UIApplication *)application 		didReceiveRemoteNotification:(NSDictionary *)userInfo {
+	  	// Required
+	 	[APService registerDeviceToken:deviceToken];
+	}
 	```
 	```
-    	//IOS7 only
-		- (void)application:(UIApplication *)application
-		didReceiveRemoteNotification:(NSDictionary *)userInfo
+    //IOS7 only
+	- (void)application:(UIApplication *)application
+	didReceiveRemoteNotification:(NSDictionary *)userInfo
 		fetchCompletionHandler:(void (^)(UIBackgroundFetchResult))completionHandler {
-  			[APService handleRemoteNotification:userInfo];
-	  		completionHandler(UIBackgroundFetchResultNewData);
-		}
+  		[APService handleRemoteNotification:userInfo];
+	  	completionHandler(UIBackgroundFetchResultNewData);
+	}
 	```
 * 在需要处理推送回调的类中添加回调函数，相应地调用 JPush SDK 提供的 API 来实现功能,调用地方需要引入头文件JPushService.h
 
