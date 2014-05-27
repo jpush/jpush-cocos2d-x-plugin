@@ -63,13 +63,15 @@ JPush's officially supported Cocos2d-x plugin (Android &amp; iOS). 极光推送�
 	}
 	```
 	```
-	- (void)application:(UIApplication *)application 		didRegisterForRemoteNotificationsWithDeviceToken:(NSData *)deviceToken{
+	- (void)application:(UIApplication *)application 
+	didRegisterForRemoteNotificationsWithDeviceToken:(NSData *)deviceToken{
 		// Required
 		[APService registerDeviceToken:deviceToken];
 	}
 	```
 	```	
-	- (void)application:(UIApplication *)application 		didReceiveRemoteNotification:(NSDictionary *)userInfo {
+	- (void)application:(UIApplication *)application
+	 		didReceiveRemoteNotification:(NSDictionary *)userInfo {
 	  	// Required
 	 	[APService registerDeviceToken:deviceToken];
 	}
@@ -265,12 +267,11 @@ JPush's officially supported Cocos2d-x plugin (Android &amp; iOS). 极光推送�
 ####4. 添加代码
 添加获取Context代码,在游戏主Activity中加入如下代码：
 
-```	
 	public static Context STATIC_REF = null;
 	public static Context getContext(){
         return STATIC_REF;
     }
-```
+    
 在`onCreate()`函数中添加获取context代码，如：
 
     protected void onCreate(Bundle savedInstanceState){
