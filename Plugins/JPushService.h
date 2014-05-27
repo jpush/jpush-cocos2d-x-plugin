@@ -99,9 +99,9 @@ class JPushService {
   static void setLatestNotifactionNumber(int maxNum);
 #endif
   /**
-   *  获取收到消息(Jpush服务器)
+   *  注册回调函数，用于接收通知点击事件，获取通知信息。
    */
-  static void registerCallbackFunction(
+  static void registerRemoteNotifcationCallback(
       void *p_handle, APNetworkDidReceiveMessage_callback message_callback);
   /**
    *  Tags & Alias
