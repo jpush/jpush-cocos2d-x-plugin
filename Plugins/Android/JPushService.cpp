@@ -452,6 +452,24 @@ void Java_Your Package Name_JPushCallbackHelper_setAliasAndTagsCallback(JNIEnv *
     delete(c_tags);
     
 }
+    
+APNetworkDidReceiveMessage_callback notification_callback = NULL;
+void * notificationHandler = NULL;
+void JPushService::registerRemoteNotifcationCallback(void *p_handle, APNetworkDidReceiveMessage_callback message_callback){
+    notification_callback = message_callback;
+    notificationHandler = p_handle;
+}
+
+void Java_Your Package Name_JPushReceiver_didReceiveRemoteNotification(JNIEnv *env,jclass,jstring message){
+    const char * notification = NULL;
+    if(message != NULL){
+        notification = env->GetStringUTFChars(message, JNI_FALSE);
+    }
+    notification_callback(notificationHandler,notification);
+    if(message!=NULL){
+        env->ReleaseStringUTFChars(message, notification);
+    }
+}
 
 
 }

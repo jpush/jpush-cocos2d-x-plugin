@@ -163,7 +163,7 @@ void Register_callback(const char *registrationID) {
 - 将Plugins中的`/JPushService.h`与Android目录下的`Android/JPushService.cpp`、拖入到工程中合适的位置，（`JPushService.h`放Classes目录下，`JPushService.cpp`放在jni目录下）并修改Android.mk文件中的`LOCAL_SRC_FILES`确保`JPushService.cpp`能被顺利编译。
 - 修改`LOCAL_C_INCLUDES`确保`JPushService.h`能被其他源文件正确引用，并将`$(LOCAL_PATH)/../../../../cocos2dx/platform/android/jni
 `加入到`LOCAL_C_INCLUDES`之中确保`JniHelper.h`能被找到。
--  将`JPushCallbackHelper.java`放在`src`包名目录下。
+-  将`Android/JPushCallbackHelper.java`放在`src`包名目录下。
 
 ####2. 配置 AndroidManifest.xml**3.1 使用脚本自动配置**
 
@@ -330,8 +330,47 @@ JPush SDK 提供的 API 接口,都主要集中在 JpushService.h 类里。只需
 	    JPushService::setDebugMode(true);
 	   
 就可以使用推送消息了。
-	    
-####6. 测试确认1. 确认所需的权限都已经添加。如果必须的权限未添加,日志会提示错误。2. 确认 AppKey(在Portal上生成的)已经正确的写入 Androidmanifest.xml 。
+
+####6. 接收推送消息
+这个动作不是必须的，如果不做这个动作，则默认的行为是：
+
+- 接收到推送的自定义消息，则没有被处理
+- 可以正常收到通知，用户点击打开应用主界面
+
+
+**6.1** 如果全部类型的广播都接收，则需要在 AndroidManifest.xml 里添加如下的配置信息：
+
+	<receiver
+	    android:name="JPushReceiver"
+	    android:enabled="true">
+	    <intent-filter>
+	        <action android:name="cn.jpush.android.intent.REGISTRATION" />
+	        <action android:name="cn.jpush.android.intent.MESSAGE_RECEIVED" />
+	        <action android:name="cn.jpush.android.intent.NOTIFICATION_RECEIVED" />
+	        <action android:name="cn.jpush.android.intent.NOTIFICATION_OPENED" />
+	        
+	        <category android:name="You package Name" />
+	    </intent-filter>
+	</receiver>
+将`Your Package Name`替换成你自己的包名。
+
+**6.2** 将SDK中的`Android/JPushReceiver.java`放在`src`包名目录下.
+
+**6.3** 注册回调函数
+
+首先注册一个回调函数，如：
+
+	void handlerRemoteNotification(void* p_handler,const char *message){
+		//当收到推送通知时，会触发这个回调函数，其中message参数是一个Json字符串，你可以
+		//从中获取通知的详细信息
+	}
+然后调用
+	   
+	    JPushService::registerRemoteNotifcationCallback(this, &handlerRemoteNotification);
+	 
+向JPushService注册此回调函数，具体字段可参考`JPushReceiver.java`类。
+
+####7. 测试确认1. 确认所需的权限都已经添加。如果必须的权限未添加,日志会提示错误。2. 确认 AppKey(在Portal上生成的)已经正确的写入 Androidmanifest.xml 。
 3. 确认在程序启动时候调用了init(context) 接口4. 确认测试手机(或者模拟器)已成功连入网络客户端调用 init 后不久,如果一切正常,应有登录成功的日志信息5. 启动应用程序,在 Portal 上向应用程序发送自定义消息或者通知栏提示。详情请参考管理Portal。在几秒内,客户端应可收到下发的通知或者正定义消息.
 高级功能 请参考:[标签与别名API]()
 [接收推送消息]()
