@@ -3,147 +3,116 @@ jpush-cocos2d-x-plugin
 
 JPush's officially supported Cocos2d-x plugin (Android &amp; iOS). 极光推送官方支持的 Cocos2d-x 插件（Android &amp; iOS）。
 
-## 导入到 Cocos2d-x 项目
+### 导入到 Cocos2d-x 项目
 
-* 搭建好Cocos2d-x(ios/android)开发环境
+- 搭建好Cocos2d-x(iOS/Android)开发环境
 
 
 ## 集成 JPush Cocos2d-x iOS SDK
+---------------------------------------------
+#### 1. 配置基本信息
 
-* 使用cocos2d-x脚本生成ios工程,并打开该工程
+* 使用cocos2d-x脚本生成iOS工程,并打开该工程
 
 * 添加必要的框架
-```
-CoreTelephony.framework
-Security.framework
-CFNetwork.framework
-CoreFoundation.framework
-SystemConfiguration.framework
-```
-* 创建并配置PushConfig.plist文件
-在你的工程中创建一个新的Property List文件，并将其命名为PushConfig.plist，填入Portal为你的应用提供的APP_KEY等参数。
+`CoreTelephony.framework`,
+`Security.framework`,
+`CFNetwork.framework`,
+`CoreFoundation.framework`,
+`SystemConfiguration.framework`。
 
-	CHANNEL
-指明应用程序包的下载渠道，为方便分渠道统计。根据你的需求自行定义即可。
-APP_KEY
-在管理Portal上创建应用时自动生成的（AppKey）用以标识该应用。请确保应用内配置的 AppKey 与第1步在 Portal 上创建应用时生成的 AppKey 一致，AppKey 可以在应用详情中查询。
+* 	创建并配置PushConfig.plist文件，在你的工程中创建一个新的Property List文件，并将其命名为PushConfig.plist，填入Portal为你的应用提供的APP_KEY等参数。
 
-	APS_FOR_PRODUCTION
-表示应用是否采用生产证书发布( Ad_Hoc 或 APP Store )，0 (默认值)表示采用的是开发者证书，1 表示采用生产证书发布应用。请注意此处配置与 Web Portal 应用环境设置匹配。
+	CHANNEL指明应用程序包的下载渠道，为方便分渠道统计。根据你的需求自行定义即可。APP_KEY在管理Portal上创建应用时自动生成的（AppKey）用以标识该应用。请确保应用内配置的 AppKey 与第1步在 Portal 上创建应用时生成的 AppKey 一致，AppKey 可以在应用详情中查询。
 
-```
-{
-    "APS_FOR_PRODUCTION = "0";
-    "CHANNEL" = "Publish channel";
-    "APP_KEY" = "AppKey copied from JPush Portal application";
-}
-```
+	APS_FOR_PRODUCTION表示应用是否采用生产证书发布( Ad_Hoc 或 APP Store )，0 (默认值)表示采用的是开发者证书，1 表示采用生产证书发布应用。请注意此处配置与 Web Portal 应用环境设置匹配。
 
-* Build Settings
-设置 Search Paths 下的 User Header Search Paths 和 Library Search Paths，比如SDK文件夹（默认为lib）与工程文件在同一级目录下，则都设置为"$(SRCROOT)/[文件夹名称]"即可。
+	
+		{
+	    "APS_FOR_PRODUCTION = "0";
+    	"CHANNEL" = "Publish channel";
+	    "APP_KEY" = "AppKey copied from JPush Portal application";
+		}
 
-* 在XCode中选择“Add files to 'Your project name'...”，将lib子文件夹中的libPushSDK.a添加到你的工程目录中。
+*	Build Settings设置 Search Paths 下的 User Header Search Paths 和 Library Search Paths，比如SDK文件夹（默认为lib）与工程文件在同一级目录下，则都设置为"$(SRCROOT)/[文件夹名称]"即可。
+
+*	在XCode中选择“Add files to 'Your project name'...”，将lib子文件夹中的libPushSDK.a添加到你的工程目录中。
   
-*  将Plugins/iOS/lib 文件夹下的 APServer.h，APServiceCpp.h,APServiceCpp.mm拖入 project 中(或者点击右键，点击 add files to "project name")，APServer.h拖入Class文件夹中,和安卓共享同一个，APServiceCpp.h,APServiceCpp.mm拖入ios文件夹下.
+*	将Plugins/iOS/lib 文件夹下的 APServer.h，APServiceCpp.h,APServiceCpp.mm拖入 project 中(或者点击右键，点击 add files to "project name")，APServer.h拖入Class文件夹中,和安卓共享同一个，APServiceCpp.h,APServiceCpp.mm拖入ios文件夹下.
 
-* 在ios/AppController.mm(注意不是AppDelegate.cpp) 中添加头文件APService.h
+#### 2. 添加代码
 
+* 	在ios/AppController.mm(注意不是AppDelegate.cpp) 中添加头文件`APService.h`
 
-```
-#import "APService.h"
-```
-
+		#import "APService.h"
 
 * 在 AppController.mm 中添加监听系统事件，相应地调用 JPush SDK 提供的 API 来实现功能
 
+	```
+	- (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions{
+		// Required
+		[APService registerForRemoteNotificationTypes:UIRemoteNotificationTypeBadge |UIRemoteNotificationTypeSound |UIRemoteNotificationTypeAlert];
+		// Required
+     	[APService setupWithOption:launchOptions];
+         ......
+       return YES;
+	}
+	```
 ```
-  - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
-  {
-  // Required
-  [APService registerForRemoteNotificationTypes:UIRemoteNotificationTypeBadge |
-                                                UIRemoteNotificationTypeSound |
-                                                UIRemoteNotificationTypeAlert];
-  // Required
-          [APService setupWithOption:launchOptions];
-          ......
-          return YES;
- }
-```
-```
-  	- (void)application:(UIApplication *)application 	didRegisterForRemoteNotificationsWithDeviceToken:(NSData *)deviceToken {
-      		// Required
-      		[APService registerDeviceToken:deviceToken];
-  		}
+	- (void)application:(UIApplication *)application 	didRegisterForRemoteNotificationsWithDeviceToken:(NSData *)deviceToken{
+	    // Required
+	 	[APService registerDeviceToken:deviceToken];
+	}
 ```
 ```	
- 	 - (void)application:(UIApplication *)application 	didReceiveRemoteNotification:(NSDictionary *)userInfo {
-     	 // Required
-     	 [APService registerDeviceToken:deviceToken];
- 	 }
+	- (void)application:(UIApplication *)application 	didReceiveRemoteNotification:(NSDictionary *)userInfo {
+	  	// Required
+	 	[APService registerDeviceToken:deviceToken];
+	 }
 ```
 ```
     //IOS7 only
 	- (void)application:(UIApplication *)application
-      didReceiveRemoteNotification:(NSDictionary *)userInfo
-          fetchCompletionHandler:
-              (void (^)(UIBackgroundFetchResult))completionHandler {
-  [APService handleRemoteNotification:userInfo];
-  completionHandler(UIBackgroundFetchResultNewData);
-}
+	didReceiveRemoteNotification:(NSDictionary *)userInfo
+	fetchCompletionHandler:(void (^)(UIBackgroundFetchResult))completionHandler {
+  		[APService handleRemoteNotification:userInfo];
+  		completionHandler(UIBackgroundFetchResultNewData);
+	}
 ```
 * 在需要处理推送回调的类中添加回调函数，相应地调用 JPush SDK 提供的 API 来实现功能,调用地方需要引入头文件JPushService.h
 
-```
-#import "JPushService.h"
+		#import "JPushService.h"
 
-JPushService::registerCallbackFunction(setupCallback, closeCallback,
+		JPushService::registerCallbackFunction(setupCallback, closeCallback,
                                          Register_callback, Login_callback,
                                          ReceiveMessage_callback);
-```
-* * 或者你也可以分别调用每一个回调函数的设置API方法
+                                         
+                                         
+* 或者你也可以分别调用每一个回调函数的设置API方法
 
-```
-  static void registerSetupCallbackFunction(setupCallback);
-  static void registerCloseCallbackFunction(closeCallback);
-  static void registerRegisterCallbackFunction(Register_callback);
-  static void registerLoginCallbackFunction(Login_callback);
-  static void registerCallbackFunction(ReceiveMessage_callback);
-```
+	  static void registerSetupCallbackFunction(setupCallback);
+	  static void registerCloseCallbackFunction(closeCallback);
+	  static void registerRegisterCallbackFunction(Register_callback);
+	  static void registerLoginCallbackFunction(Login_callback);
+	  static void registerCallbackFunction(ReceiveMessage_callback);
 
-* * API参数要符合头文件提供的函数指针
 
-```
-void setupCallback() { cout << "setup" << endl; }
-```
+* API参数要符合头文件提供的函数指针
 
-* Tags、Alias设置方法
+		void setupCallback() { cout << "setup" << endl; }
 
-```
-JPushService::setAliasAndTags("别名1", tags1, tagsAliasCallback);
+* Tags、Alias设置方法	,自定义tagsAliasCallback要符合头文件的函数指针
 
-```
-* * tagsAliasCallback要符合头文件的函数指针
+		JPushService::setAliasAndTags("别名1", tags1, tagsAliasCallback);
+		
+* Tags过滤方法：需要传入一个result指针用以获取过滤后的Tags. 
 
-```
-void tagsAliasCallback(int responseCode, const char *alias, c_tags tags) {
-  set<string>::iterator it = tags->begin();
-  for (; it != tags->end(); ++it) {
-    const char *p = ((string)(*it)).c_str();
-    cout << "tags:" << p << endl;
-  }
-  cout << "alias" << alias << endl;
-  cout << "iResCode" << responseCode << endl;
-}
-
-```
+		bool filterValidTags(set<string> *tags, set<string> *result);
 
 * 获取RegistrationID
 
-```
-void Register_callback(const char *registrationID) {
-  cout << "registration:" << registrationID << endl;
-}
-```
+		void register_callback(const char *registrationID)；
+		
 
 #### ##注意事项:在用filterValidTags函数之后，记得将返回的函数指针释放！
 
@@ -366,7 +335,7 @@ JPush SDK 提供的 API 接口,都主要集中在 JpushService.h 类里。只需
 	}
 然后调用
 	   
-	    JPushService::registerRemoteNotifcationCallback(this, &handlerRemoteNotification);
+	JPushService::registerRemoteNotifcationCallback(this, &handlerRemoteNotification);
 	 
 向JPushService注册此回调函数，具体字段可参考`JPushReceiver.java`类。
 
