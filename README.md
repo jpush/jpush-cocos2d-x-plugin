@@ -124,7 +124,7 @@ JPush's officially supported Cocos2d-x plugin (Android &amp; iOS). 极光推送�
 
 
 ####执行脚本
-- 将下载下来的`jpush-cocos2d-x-plugin`文件夹拖到`{COCOS2DX_ROOT}plugin/plugins`目录下。
+- 将下载下来的`jpush-cocos2d-x-plugin`文件夹拖到`{COCOS2DX_ROOT}/plugin/plugins`目录下。
 - 执行`jpush-cocos2d-x-plugin/Plugins/install_jpush.py`
 
 		./install_jpush.py -project YourProjectName -pcakage YourPackageName -appkey YourAppkey
