@@ -123,172 +123,15 @@ JPush's officially supported Cocos2d-x plugin (Android &amp; iOS). 极光推送�
 ## 集成 JPush Cocos2d-x Android SDK
 
 
+####执行脚本
+- 将下载下来的`jpush-cocos2d-x-plugin`文件夹拖到`{COCOS2DX_ROOT}plugin/plugins`目录下。
+- 执行`jpush-cocos2d-x-plugin/Plugins/install_jpush.py`
 
-####1. 在项目中导入SDK开发包
-- 复制 `libs/jpush-sdk-release1.6.1.jar` 到工程__libs/__目录下- 复制 `prebuild` 文件夹到jni目录下
-
-刷新此目录。修改jni目录下的__Android.mk__,添加：
-
-		include $(LOCAL_PATH)/prebuild/Android.mk
-		LOCAL_SHARED_LIBRARIES := jpush_so
-
-- 将Plugins中的`/JPushService.h`与Android目录下的`Android/JPushService.cpp`、拖入到工程中合适的位置，（`JPushService.h`放Classes目录下，`JPushService.cpp`放在jni目录下）并修改Android.mk文件中的`LOCAL_SRC_FILES`确保`JPushService.cpp`能被顺利编译。
-- 修改`LOCAL_C_INCLUDES`确保`JPushService.h`能被其他源文件正确引用，并将`$(LOCAL_PATH)/../../../../cocos2dx/platform/android/jni
-`加入到`LOCAL_C_INCLUDES`之中确保`JniHelper.h`能被找到。
--  将`Android/JPushCallbackHelper.java`放在`src`包名目录下。
-
-####2. 配置 AndroidManifest.xml**3.1 使用脚本自动配置**
-
-运行manifest_util.py
+		./install_jpush.py -project YourProjectName -pcakage YourPackageName -appkey YourAppkey
 	
-	python manifest_util.py
+	完成！
 
-然后根据提示输入android项目下`manifest.xml`的路径，以及对应的Portal上注册的`app key`.显示done之后配置成功。 根据需要选择是否添加下列权限
-
-	   <!-- Optional. Required for location feature -->
-    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
-    <uses-permission android:name="android.permission.ACCESS_COARSE_UPDATES" />
-    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
-    <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
-    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
-    <uses-permission android:name="android.permission.ACCESS_LOCATION_EXTRA_COMMANDS" />
-    <uses-permission android:name="android.permission.CHANGE_NETWORK_STATE" />
-
-**3.2手动配置**
-	如果不使用自动配置，可手动配置manifest。主要步骤为:	
-1. 复制备注为 "Required" 的部分2. 将备注为替换包名的部分,替换为当前应用程序的包名3. 将AppKey替换为在Portal上注册该应用的的Key,例如(9fed5bcb7b9b87413678c407)
-
-		<!-- Required -->
-		<permission android:name="Your Package Name.permission.JPUSH_MESSAGE" 
-        android:protectionLevel="signature" />
-        <!-- End -->
-        
-        <application android:label="@string/app_name"
-        android:icon="@drawable/icon" >
-        
-        <activity android:name=".Your Activity Name"
-                  android:label="@string/app_name"
-                  android:screenOrientation="landscape"
-                  android:theme="@android:style/Theme.NoTitleBar.Fullscreen"
-                  android:configChanges="orientation">
-                  <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
-       
-       <!-- Required -->
-       
-		<service
-		    android:name="cn.jpush.android.service.PushService"
-		    android:enabled="true"
-		    android:exported="false" >
-		    <intent-filter>
-		        <action android:name="cn.jpush.android.intent.REGISTER" />
-		        <action android:name="cn.jpush.android.intent.REPORT" />
-		        <action android:name="cn.jpush.android.intent.PushService" />
-		    </intent-filter>
-		</service>
-		
-		<receiver
-			    android:name="cn.jpush.android.service.PushReceiver"
-			    android:enabled="true" >
-		    <intent-filter >
-		        <action android:name="cn.jpush.android.intent.NOTIFICATION_RECEIVED_PROXY" />
-		        <category android:name="Your Package Name" />
-		    </intent-filter>>
-			<intent-filter>
-			    <action android:name="android.intent.action.USER_PRESENT" />
-				<action	android:name="android.net.conn.CONNECTIVITY_CHANGE" />
-			</intent-filter>
-			
-			<intent-filter>
-			    <action android:name="android.intent.action.PACKAGE_ADDED" />
-				<action android:name="android.intent.action.PACKAGE_REMOVED" />
-			    <data android:scheme="package" />
-			</intent-filter>
-		</receiver>
-		
-		<activity
-				android:name="cn.jpush.android.ui.PushActivity"
-				android:theme="@android:style/Theme.Translucent.NoTitleBar"
-				android:configChanges="orientation|keyboardHidden" >
-		 	<intent-filter>
-    			<action android:name="cn.jpush.android.ui.PushActivity" />
-    			<category android:name="android.intent.category.DEFAULT" />
-    			<category android:name="Your Package Name" />
-			</intent-filter>
-		</activity>
-		
-		<service
-    		android:name="cn.jpush.android.service.DownloadService"
-    		android:enabled="true"
-    		android:exported="false" >
-		</service>
-		
-		<receiver android:name="cn.jpush.android.service.AlarmReceiver" />
-		
-		<!-- Required. For publish channel feature -->
-        <meta-data android:name="JPUSH_CHANNEL"
-        android:value="developer-default"/>
-        <!-- Required. AppKey copied from Portal -->
-        <meta-data android:name="JPUSH_APPKEY" android:value="Your App Key"/>	
-        <!-- END -->
-        </application>
-    	
-    	<!-- Required -->
-    	<uses-permission android:name="android.permission.INTERNET"/>
-    	<uses-permission android:name="Your Package Name.permission.JPUSH_MESSAGE" />
-	    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
-	    <uses-permission android:name="android.permission.RECEIVE_USER_PRESENT" />
-	    <uses-permission android:name="android.permission.INTERNET" />
-	    <uses-permission android:name="android.permission.WAKE_LOCK" />
-    	<uses-permission android:name="android.permission.READ_PHONE_STATE" />
-	    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-	    <uses-permission android:name="android.permission.WRITE_SETTINGS" />
-    	<uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
-    	<uses-permission android:name="android.permission.VIBRATE" />
-    	<uses-permission android:name="android.permission.MOUNT_UNMOUNT_FILESYSTEMS" />
-	    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-	    <!-- END -->
-
-    	<!-- Optional. Required for location feature -->
-	    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
-    	<uses-permission android:name="android.permission.ACCESS_COARSE_UPDATES" />
-	    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
-    	<uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
-    	<uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
-	    <uses-permission android:name="android.permission.ACCESS_LOCATION_EXTRA_COMMANDS" />
-    	<uses-permission android:name="android.permission.CHANGE_NETWORK_STATE" />
-    	<!-- Optional. Required for location feature END	 -->
-    	
-####4. 添加代码
-添加获取Context代码,在游戏主Activity中加入如下代码：
-
-	public static Context STATIC_REF = null;
-	public static Context getContext(){
-        return STATIC_REF;
-    }
-    
-在`onCreate()`函数中添加获取context代码，如：
-
-    protected void onCreate(Bundle savedInstanceState){
-		super.onCreate(savedInstanceState);	
-		STATIC_REF = this.getApplicationContext(); //request!
-	}
-
-修改JpushService.cpp
-
-	//修改为包名+主Activity的名字，如com/JPush/Excample/MainActivity
-		const char* kActivityName = "Your Main Activity"; 
-	
-	//将Yout Package Name 替换成你自己的包名如com/JPush/Excample
-		const char* kCallbackClassName = "Your Package Name/JPushCallbackHelper";
-
-
-	将方法中得Your Package Name替换成你自己的包名，如_com_JPush_Excample_
-
-####5. 终于可以用了
+####使用API
 JPush SDK 提供的 API 接口,都主要集中在 JPushService.h 类里。只需要在第一个游戏场景中：
 
 - init 初始化SDK
@@ -302,14 +145,14 @@ JPush SDK 提供的 API 接口,都主要集中在 JPushService.h 类里。只需
 	   
 就可以使用推送消息了。
 
-####6. 接收推送消息
+#### 接收推送消息
 这个动作不是必须的，如果不做这个动作，则默认的行为是：
 
 - 接收到推送的自定义消息，则没有被处理
 - 可以正常收到通知，用户点击打开应用主界面
 
 
-**6.1** 如果全部类型的广播都接收，则需要在 AndroidManifest.xml 里添加如下的配置信息：
+**1.** 如果全部类型的广播都接收，则需要在 AndroidManifest.xml 里添加如下的配置信息：
 
 	<receiver
 	    android:name="JPushReceiver"
@@ -325,9 +168,9 @@ JPush SDK 提供的 API 接口,都主要集中在 JPushService.h 类里。只需
 	</receiver>
 将`Your Package Name`替换成你自己的包名。
 
-**6.2** 将SDK中的`Android/JPushReceiver.java`放在`src`包名目录下.
+**2.** 将SDK中的`Android/JPushReceiver.java`放在`src`包名目录下.
 
-**6.3** 注册回调函数
+**3.** 注册回调函数
 
 首先注册一个回调函数，如：
 
@@ -341,7 +184,7 @@ JPush SDK 提供的 API 接口,都主要集中在 JPushService.h 类里。只需
 	 
 向JPushService注册此回调函数，具体字段可参考`JPushReceiver.java`类。
 
-####7. 测试确认1. 确认所需的权限都已经添加。如果必须的权限未添加,日志会提示错误。2. 确认 AppKey(在Portal上生成的)已经正确的写入 Androidmanifest.xml 。
+#### 测试确认1. 确认所需的权限都已经添加。如果必须的权限未添加,日志会提示错误。2. 确认 AppKey(在Portal上生成的)已经正确的写入 Androidmanifest.xml 。
 3. 确认在程序启动时候调用了init() 接口4. 确认测试手机(或者模拟器)已成功连入网络客户端调用 init 后不久,如果一切正常,应有登录成功的日志信息5. 启动应用程序,在 Portal 上向应用程序发送自定义消息或者通知栏提示。详情请参考管理Portal。在几秒内,客户端应可收到下发的通知或者正定义消息.
 高级功能 请参考:[标签与别名API]()
 [接收推送消息]()
