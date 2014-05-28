@@ -109,6 +109,14 @@ def copyTextToAndroidmk():
     lines.insert(i, "LOCAL_SHARED_LIBRARIES := jpush_so");
     i=i+1
     lines.insert(i,"\n")
+    i=0
+    for linesub in lines:
+    	i=i+1
+    	if linesub.find("hellocpp/main.cpp")>=0:
+    	    break
+    lines.insert(i,"					JPushService.cpp \\");
+    i=i+1;
+    lines.insert(i,"\n");
     fp=file(mkTargetPath,'w')
     for s in lines:   
         fp.write(s)
@@ -260,6 +268,60 @@ def writeManifest():
     tree.write(manifest,"utf-8",xml_declaration=True)
     print "copy Manifest done"
 # end of writeManifest() function
+def replacePackageName():
+	print "replacing package name"
+	pushserverTarget = context["dst_project_path"]+context["dst_project_name"]+"/proj.android/jni/JPushService.cpp"
+	originString = context['dst_package_name']
+	nameFunction = originString.replace('.','_');
+	path=originString.replace('.','/')
+	#nameFunction=re.sub('.','_',originString)
+	#namePath=re.sub('.','_',originString)
+
+	fp = file(pushserverTarget)
+	content = fp.read();
+	content=content.replace('Your Package Name',path)
+	content=content.replace('Your_Package_Name',nameFunction)
+	fp.close()
+
+	fp = file(pushserverTarget,'w')
+	fp.write(content)
+	fp.close()
+	print "replace package name done"
+
+# end of replacePackageName() function
+def fixMainActivity():
+	print "fixing main activity"
+	javafileTarget = context["dst_project_path"]+context["dst_project_name"]+"/proj.android/src/"
+	path=context['dst_package_name'].replace('.','/')
+	javafileTarget=javafileTarget+'/'+path+'/'+context['dst_project_name']+'.java'
+	fp=file(javafileTarget)
+	lines=[]
+	for line in fp:
+		lines.append(line)
+	fp.close()
+	i=0
+	for line in lines:
+		i=i+1
+		if line.find('{')>=0:
+			break;
+	lines.insert(i,"public static Context STATIC_REF = null;\n")
+	lines.insert(i+1,"public static Context getContext(){\n")
+	lines.insert(i+2,"    return STATIC_REF;\n")
+	lines.insert(i+4,"}\n")
+	i=0
+	for line in lines:
+		i=i+1
+		if line.find("super.onCreate")>=0:
+			break;
+	lines.insert(i,"STATIC_REF = this.getApplicationContext();\n");
+
+	fp=file(javafileTarget,'w')
+	for s in lines:
+		fp.write(s)
+	fp.close()
+	print "fix main activity done"
+
+# end of fixMainActivity() function
 # -------------- main --------------
 # dump argvs
 # print sys.argv
@@ -268,4 +330,7 @@ copyToProjcect();
 copyTextToAndroidmk();
 copyCodeToProject();
 writeManifest();
+replacePackageName();
+fixMainActivity();
+
 
