@@ -432,7 +432,7 @@ void JPushService::setLatestNotifactionNumber(int maxNum){
 }
 
 //将方法中得Your Package Name替换成你自己的包名，如__com_Jpush_Excample__
-void Java_Your Package Name_JPushCallbackHelper_setAliasAndTagsCallback(JNIEnv *env,jclass,
+void Java_Your_Package_Name_JPushCallbackHelper_setAliasAndTagsCallback(JNIEnv *env,jclass,
                                                                                  jlong func_handler,jint resultCode, jstring alias,jobject tags,jlong func_ptr){
     int result = resultCode;
     const char *c_alias = NULL;
@@ -460,7 +460,7 @@ void JPushService::registerRemoteNotifcationCallback(void *p_handle, APNetworkDi
     notificationHandler = p_handle;
 }
 
-void Java_Your Package Name_JPushReceiver_didReceiveRemoteNotification(JNIEnv *env,jclass,jstring message){
+void Java_Your_Package_Name_JPushReceiver_didReceiveRemoteNotification(JNIEnv *env,jclass,jstring message){
     const char * notification = NULL;
     if(message != NULL){
         notification = env->GetStringUTFChars(message, JNI_FALSE);

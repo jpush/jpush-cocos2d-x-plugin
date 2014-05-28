@@ -9,7 +9,7 @@ JPush's officially supported Cocos2d-x plugin (Android &amp; iOS). 极光推送�
 
 
 ## 集成 JPush Cocos2d-x iOS SDK
----------------------------------------------
+-----------------------
 #### 1. 配置基本信息
 
 * 使用cocos2d-x脚本生成iOS工程,并打开该工程
@@ -118,8 +118,6 @@ JPush's officially supported Cocos2d-x plugin (Android &amp; iOS). 极光推送�
 
 		void register_callback(const char *registrationID)；
 		
-
-#### ##注意事项:在用filterValidTags函数之后，记得将返回的函数指针释放！
 
 ---------------------------------------------------------------------------
 ## 集成 JPush Cocos2d-x Android SDK
@@ -288,7 +286,7 @@ JPush's officially supported Cocos2d-x plugin (Android &amp; iOS). 极光推送�
 		const char* kCallbackClassName = "Your Package Name/JPushCallbackHelper";
 
 
-	将方法中得Your Package Name替换成你自己的包名，如__com_JPush_Excample__
+	将方法中得Your Package Name替换成你自己的包名，如_com_JPush_Excample_
 
 ####5. 终于可以用了
 JPush SDK 提供的 API 接口,都主要集中在 JPushService.h 类里。只需要在第一个游戏场景中：
