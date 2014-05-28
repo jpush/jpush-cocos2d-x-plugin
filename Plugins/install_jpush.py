@@ -74,23 +74,23 @@ def checkParams(context):
     context["src_project_path"] = os.getcwd() + "/Android/"
 # end of checkParams(context) function
 def copyToProjcect():
-    print "copying To Project"
+    #print "copying To Project"
     libSource=context["src_project_path"]+"libs/jpush-sdk-release1.6.1.jar"
     libTarget=context["dst_project_path"]+context["dst_project_name"]+"/proj.android/libs/"
     if not os.path.exists(libTarget):
         os.makedirs(libTarget)
     shutil.copy(libSource,libTarget)
-    print "copy jpush libs done!"
+    #print "copy jpush libs done!"
     prebuildSource=context["src_project_path"]+"libs/prebuild/"
     prebuildTarget=context["dst_project_path"]+context["dst_project_name"]+"/proj.android/jni/prebuild/"
     if os.path.exists(prebuildTarget):
         shutil.rmtree(prebuildTarget)
     shutil.copytree(prebuildSource,prebuildTarget)
-    print "copy prebuild done!"
+    #print "copy prebuild done!"
 #libs/jpush-sdk-release1.6.1.jar to libs
 # end of copyToProjcect(context) function
 def copyTextToAndroidmk():
-    print "copying Text to Android.mk"
+    #print "copying Text to Android.mk"
     mkTargetPath=context["dst_project_path"]+context["dst_project_name"]+"/proj.android/jni/Android.mk"
     fp=file(mkTargetPath)
     lines=[]
@@ -121,10 +121,10 @@ def copyTextToAndroidmk():
     for s in lines:   
         fp.write(s)
     fp.close()
-    print "copy to Android.mk done"
+    #print "copy to Android.mk done"
 # end of copyTextToAndroidmk(context) function
 def copyCodeToProject():
-    print "copying code to Project"
+    #print "copying code to Project"
     hfileSource = context["src_project_path"]+"../JPushService.h"
     hfileTarget = context["dst_project_path"]+context["dst_project_name"]+"/Classes/JPushService.h"
     if not os.path.exists(hfileTarget):
@@ -144,10 +144,10 @@ def copyCodeToProject():
     if not os.path.exists(javafileTarget):
         shutil.copy(javafileSource,javafileTarget)
 
-    print "copy code to project done!"
+    #print "copy code to project done!"
 # end of copyTextToAndroidmk(context) function
 def writeManifest():
-    print "copying Manifest"
+    #print "copying Manifest"
     data = """<?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="Your_Package_Name"
@@ -266,10 +266,10 @@ def writeManifest():
 
     tree = ET.ElementTree(first_root)
     tree.write(manifest,"utf-8",xml_declaration=True)
-    print "copy Manifest done"
+    #print "copy Manifest done"
 # end of writeManifest() function
 def replacePackageName():
-	print "replacing package name"
+	#print "replacing package name"
 	pushserverTarget = context["dst_project_path"]+context["dst_project_name"]+"/proj.android/jni/JPushService.cpp"
 	originString = context['dst_package_name']
 	nameFunction = originString.replace('.','_');
@@ -286,11 +286,11 @@ def replacePackageName():
 	fp = file(pushserverTarget,'w')
 	fp.write(content)
 	fp.close()
-	print "replace package name done"
+	#print "replace package name done"
 
 # end of replacePackageName() function
 def fixMainActivity():
-	print "fixing main activity"
+	#print "fixing main activity"
 	javafileTarget = context["dst_project_path"]+context["dst_project_name"]+"/proj.android/src/"
 	path=context['dst_package_name'].replace('.','/')
 	javafileTarget=javafileTarget+'/'+path+'/'+context['dst_project_name']+'.java'
@@ -319,7 +319,7 @@ def fixMainActivity():
 	for s in lines:
 		fp.write(s)
 	fp.close()
-	print "fix main activity done"
+	#print "fix main activity done"
 
 # end of fixMainActivity() function
 # -------------- main --------------
