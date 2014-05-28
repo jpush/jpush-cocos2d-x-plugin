@@ -304,16 +304,16 @@ def fixMainActivity():
 		i=i+1
 		if line.find('{')>=0:
 			break;
-	lines.insert(i,"public static Context STATIC_REF = null;\n")
-	lines.insert(i+1,"public static Context getContext(){\n")
-	lines.insert(i+2,"    return STATIC_REF;\n")
-	lines.insert(i+4,"}\n")
+	lines.insert(i,  "	public static Context STATIC_REF = null;\n")
+	lines.insert(i+1,"	public static Context getContext(){\n")
+	lines.insert(i+2,"  	return STATIC_REF;\n")
+	lines.insert(i+4,"	}\n")
 	i=0
 	for line in lines:
 		i=i+1
 		if line.find("super.onCreate")>=0:
 			break;
-	lines.insert(i,"STATIC_REF = this.getApplicationContext();\n");
+	lines.insert(i, "		STATIC_REF = this.getApplicationContext();\n");
 
 	fp=file(javafileTarget,'w')
 	for s in lines:
@@ -332,5 +332,4 @@ copyCodeToProject();
 writeManifest();
 replacePackageName();
 fixMainActivity();
-
-
+print "The JPush SDK has been successfully import in your project,have fun!"
