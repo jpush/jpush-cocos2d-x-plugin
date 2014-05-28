@@ -281,6 +281,7 @@ def replacePackageName():
 	content = fp.read();
 	content=content.replace('Your Package Name',path)
 	content=content.replace('Your_Package_Name',nameFunction)
+	content=content.replace('MainActivityName',content['dst_project_name'])
 	fp.close()
 
 	fp = file(pushserverTarget,'w')

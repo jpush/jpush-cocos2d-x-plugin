@@ -25,7 +25,7 @@ SAFE_RELEASE_JOBJ(jctx); \
     
     
 const char* kJPushClassName = "cn/jpush/android/api/JPushInterface";
-const char* kActivityName = "Your Package Name";
+const char* kActivityName = "Your Package Name/MainActivityName";
 const char* kCallbackClassName = "Your Package Name/JPushCallbackHelper";
 
 
