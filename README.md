@@ -160,8 +160,7 @@ JPush SDK 提供的 API 接口,都主要集中在 JPushService.h 类里。只需
 	        <action android:name="cn.jpush.android.intent.MESSAGE_RECEIVED" />
 	        <action android:name="cn.jpush.android.intent.NOTIFICATION_RECEIVED" />
 	        <action android:name="cn.jpush.android.intent.NOTIFICATION_OPENED" />
-	        
-	        <category android:name="You package Name" />
+	        <category android:name="You Package Name" />
 	    </intent-filter>
 	</receiver>
 将`Your Package Name`替换成你自己的包名。
