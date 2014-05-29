@@ -154,9 +154,7 @@ JPush SDK 提供的 API 接口,都主要集中在 JPushService.h 类里。只需
 
 **1.** 如果全部类型的广播都接收，则需要在 AndroidManifest.xml 里添加如下的配置信息：
 
-	<receiver
-	    android:name="JPushReceiver"
-	    android:enabled="true">
+	<receiver android:name="JPushReceiver" android:enabled="true">
 	    <intent-filter>
 	        <action android:name="cn.jpush.android.intent.REGISTRATION" />
 	        <action android:name="cn.jpush.android.intent.MESSAGE_RECEIVED" />
@@ -172,7 +170,7 @@ JPush SDK 提供的 API 接口,都主要集中在 JPushService.h 类里。只需
 
 **3.** 注册回调函数
 
-首先注册一个回调函数，如：
+首先定义一个回调函数，如：
 
 	void handlerRemoteNotification(void* p_handler,const char *message){
 		//当收到推送通知时，会触发这个回调函数，其中message参数是一个Json字符串，你可以
