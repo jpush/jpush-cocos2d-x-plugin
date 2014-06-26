@@ -4,7 +4,7 @@
 context = {
 "src_project_name"  : "undefined",
 "src_package_name"  : "undefined",
-"dst_project_name"  : "undeifned",
+"dst_project_name"  : "undefined",
 "dst_package_name"  : "undefined",
 "src_project_path"  : "undefined",
 "dst_project_path"  : "undefined",
@@ -281,7 +281,7 @@ def replacePackageName():
 	content = fp.read();
 	content=content.replace('Your Package Name',path)
 	content=content.replace('Your_Package_Name',nameFunction)
-	content=content.replace('MainActivityName',content['dst_project_name'])
+	content=content.replace('MainActivityName',context["dst_project_name"])
 	fp.close()
 
 	fp = file(pushserverTarget,'w')
