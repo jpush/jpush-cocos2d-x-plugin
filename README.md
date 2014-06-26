@@ -3,10 +3,6 @@ jpush-cocos2d-x-plugin
 
 JPush's officially supported Cocos2d-x plugin (Android &amp; iOS). 极光推送官方支持的 Cocos2d-x 插件（Android &amp; iOS）。
 
-### 导入到 Cocos2d-x 项目
-
-- 搭建好Cocos2d-x(iOS/Android)开发环境
-
 
 ## 集成 JPush Cocos2d-x iOS SDK
 -----------------------
@@ -15,13 +11,14 @@ JPush's officially supported Cocos2d-x plugin (Android &amp; iOS). 极光推送�
 * 使用cocos2d-x脚本生成iOS工程,并打开该工程
 
 * 添加必要的框架
-`CoreTelephony.framework`,
-`Security.framework`,
-`CFNetwork.framework`,
-`CoreFoundation.framework`,
-`SystemConfiguration.framework`。
 
-* 	创建并配置PushConfig.plist文件，在你的工程中创建一个新的Property List文件，并将其命名为PushConfig.plist，填入Portal为你的应用提供的APP_KEY等参数。
+		CoreTelephony.framework,
+		Security.framework
+		CFNetwork.framework
+		CoreFoundation.framework
+		SystemConfiguration.framework
+
+* 创建并配置PushConfig.plist文件，在你的工程中创建一个新的Property List文件，并将其命名为PushConfig.plist，填入Portal为你的应用提供的APP_KEY等参数。
 
 	CHANNEL指明应用程序包的下载渠道，为方便分渠道统计。根据你的需求自行定义即可。APP_KEY在管理Portal上创建应用时自动生成的（AppKey）用以标识该应用。请确保应用内配置的 AppKey 与第1步在 Portal 上创建应用时生成的 AppKey 一致，AppKey 可以在应用详情中查询。
 
@@ -124,14 +121,15 @@ JPush's officially supported Cocos2d-x plugin (Android &amp; iOS). 极光推送�
 
 
 ####执行脚本
-- 将下载下来的`jpush-cocos2d-x-plugin`文件夹拖到`{COCOS2DX_ROOT}/plugin/plugins`目录下。
-- 执行`jpush-cocos2d-x-plugin/Plugins/install_jpush.py`
+* 将下载下来的`jpush-cocos2d-x-plugin`文件夹拖到`{COCOS2DX_ROOT}/plugin/plugins`目录下。
+* 执行`jpush-cocos2d-x-plugin/Plugins/install_jpush.py`
 
 		./install_jpush.py -project YourProjectName -package YourPackageName -appkey YourAppkey
 	
 	完成！
 
 ####使用API
+
 JPush SDK 提供的 API 接口,都主要集中在 JPushService.h 类里。只需要在第一个游戏场景中：
 
 - init 初始化SDK
@@ -181,12 +179,30 @@ JPush SDK 提供的 API 接口,都主要集中在 JPushService.h 类里。只需
 	 
 向JPushService注册此回调函数，具体字段可参考`JPushReceiver.java`类。
 
-#### 测试确认1. 确认所需的权限都已经添加。如果必须的权限未添加,日志会提示错误。2. 确认 AppKey(在Portal上生成的)已经正确的写入 Androidmanifest.xml 。
+#### 测试确认
+1. 确认所需的权限都已经添加。如果必须的权限未添加,日志会提示错误。2. 确认 AppKey(在Portal上生成的)已经正确的写入 Androidmanifest.xml 。
 3. 确认在程序启动时候调用了init() 接口4. 确认测试手机(或者模拟器)已成功连入网络客户端调用 init 后不久,如果一切正常,应有登录成功的日志信息5. 启动应用程序,在 Portal 上向应用程序发送自定义消息或者通知栏提示。详情请参考管理Portal。在几秒内,客户端应可收到下发的通知或者正定义消息.
-高级功能 请参考:[标签与别名API]()
-[接收推送消息]()
-技术支持
-邮件联系: support@jpush.cn 
-技术QQ群:132992583
+
+#### 常见问题
+
+##### multiple definition of 'getCallbackHelperObject
+
+解决方法：检查文件**jni/Android.mk**中**LOCAL_SRC_FILES :**是否重复包含`JPushService.cpp`
+
+引起原因：可能是执行了多次jpush-cocos2dx-plugin插件中的安装脚本
+
+
+
+##高级功能 
+请参考:[android 标签与别名API](http://docs.jpush.cn/pages/viewpage.action?pageId=557241)
+[android 接收推送消息](http://docs.jpush.cn/pages/viewpage.action?pageId=1343602)
+
+[ios 标签与别名API](http://docs.jpush.cn/pages/viewpage.action?pageId=3309913)
+
+[ios 接收推送消息](http://docs.jpush.cn/pages/viewpage.action?pageId=3310013)
+
+##技术支持
+邮件联系:<support@jpush.cn> 
+技术QQ群:132992583
 
 
