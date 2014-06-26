@@ -444,7 +444,9 @@ void Java_Your_Package_Name_JPushCallbackHelper_setAliasAndTagsCallback(JNIEnv *
     long callback_handler = func_handler;
     APTagAliasCallback callback = (APTagAliasCallback)callback_ptr;
     void * p_handler = (void *)callback_handler;
-    callback(p_handler,result,c_alias,c_tags);
+    if(callback!=NULL){
+        callback(p_handler,result,c_alias,c_tags);
+    }
     
     if(alias!=NULL){
         env->ReleaseStringUTFChars(alias, c_alias);
@@ -465,7 +467,9 @@ void Java_Your_Package_Name_JPushReceiver_didReceiveRemoteNotification(JNIEnv *e
     if(message != NULL){
         notification = env->GetStringUTFChars(message, JNI_FALSE);
     }
-    notification_callback(notificationHandler,notification);
+    if(notification_callback!=NULL){
+        notification_callback(notificationHandler,notification);
+    }
     if(message!=NULL){
         env->ReleaseStringUTFChars(message, notification);
     }

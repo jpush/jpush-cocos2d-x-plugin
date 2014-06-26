@@ -12,7 +12,7 @@ JPush's officially supported Cocos2d-x plugin (Android &amp; iOS). 极光推送�
 
 * 添加必要的框架
 
-		CoreTelephony.framework,
+		CoreTelephony.framework
 		Security.framework
 		CFNetwork.framework
 		CoreFoundation.framework
