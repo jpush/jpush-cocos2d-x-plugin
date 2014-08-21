@@ -19,9 +19,9 @@ extern "C"{
 #define SAFE_RELEASE_JOBJ(jobj)   if(jobj) { \
 t.env->DeleteLocalRef(jobj); \
 }
-#define SAFE_RELEASE_JCONTEXT(jctx)     if(!s_jpush_context){ \
-SAFE_RELEASE_JOBJ(jctx); \
-}
+//#define SAFE_RELEASE_JOBJ(jctx)     if(!s_jpush_context){ \
+//SAFE_RELEASE_JOBJ(jctx); \
+//}
     
     
 const char* kJPushClassName = "cn/jpush/android/api/JPushInterface";
@@ -29,13 +29,12 @@ const char* kActivityName = "Your Package Name/MainActivityName";
 const char* kCallbackClassName = "Your Package Name/JPushCallbackHelper";
 
 
-jobject s_jpush_context = NULL;
+//jobject s_jpush_context = NULL;
 
 jobject getContext(){
-    if (s_jpush_context) {
-        return s_jpush_context;
-    }
-    
+//    if (s_jpush_context) {
+//        return s_jpush_context;
+//    }
     JniMethodInfo t;
     if( JniHelper::getStaticMethodInfo(t
                                        , kActivityName
@@ -51,14 +50,15 @@ jobject getContext(){
 
 jobject getJinteger(int value){
     JniMethodInfo t;
-    JniHelper::getMethodInfo(t
-                             ,"java/lang/Integer"
-                             ,"<init>"
-                             ,"(I)V");
-    
-    jobject ret = t.env -> NewObject(t.classID,t.methodID,value);
-    SAFE_RELEASE_JOBJ(t.classID);
-    return ret;
+    if(JniHelper::getMethodInfo(t
+            ,"java/lang/Integer"
+            ,"<init>"
+            ,"(I)V")){
+        jobject ret = t.env -> NewObject(t.classID,t.methodID,value);
+        SAFE_RELEASE_JOBJ(t.classID);
+        return ret;
+    }
+    return NULL;
 }
 
 jobject getJstringSet(std::set<std::string> *stdSet){
@@ -84,14 +84,8 @@ jobject getJstringSet(std::set<std::string> *stdSet){
             SAFE_RELEASE_JOBJ(t.classID);
             return ret;
         }
-    }else{
-    	return NULL;
     }
-
-
-
-
-    
+    return NULL;
 
 }
 
@@ -100,25 +94,27 @@ jobject getJintSet(std::set<int> *stdSet){
         return NULL;
     }
     JniMethodInfo t;
-    JniHelper::getMethodInfo(t
-                             , "java/util/HashSet"
-                             , "<init>"
-                             , "(I)V");
-    jobject ret = t.env->NewObject(t.classID, t.methodID,stdSet->size());
-    SAFE_RELEASE_JOBJ(t.classID);
-    
-    JniHelper::getMethodInfo(t
-                             , "java/util/HashSet"
-                             , "add"
-                             , "(Ljava/lang/Object;)Z");
-    
-    for (std::set<int>::iterator it = stdSet->begin(); it != stdSet->end(); it++) {
-        jobject k = getJinteger(*it);
-        t.env->CallObjectMethod(ret, t.methodID, k);
-        SAFE_RELEASE_JOBJ(k);
+    if(JniHelper::getMethodInfo(t
+            , "java/util/HashSet"
+            , "<init>"
+            , "(I)V")){
+        jobject ret = t.env->NewObject(t.classID, t.methodID,stdSet->size());
+        SAFE_RELEASE_JOBJ(t.classID);
+        if(JniHelper::getMethodInfo(t
+                , "java/util/HashSet"
+                , "add"
+                , "(Ljava/lang/Object;)Z")){
+        	for (std::set<int>::iterator it = stdSet->begin(); it != stdSet->end(); it++) {
+        	            jobject k = getJinteger(*it);
+        	            t.env->CallObjectMethod(ret, t.methodID, k);
+        	            SAFE_RELEASE_JOBJ(k);
+        	        }
+        	        SAFE_RELEASE_JOBJ(t.classID);
+        	        return ret;
+        }
     }
-    SAFE_RELEASE_JOBJ(t.classID);
-    return ret;
+    return NULL;
+    
 }
 
 
@@ -174,7 +170,7 @@ void JPushService::init(){
                                         ,"(Landroid/content/Context;)V") ){
         jobject ctx = getContext();
         t.env->CallStaticVoidMethod(t.classID,t.methodID,ctx);
-        SAFE_RELEASE_JCONTEXT(ctx);
+        SAFE_RELEASE_JOBJ(ctx);
         SAFE_RELEASE_JOBJ(t.classID);
     }
 }
@@ -199,7 +195,7 @@ void JPushService::stopPush(){
                                       ,"(Landroid/content/Context;)V" )){
         jobject ctx = getContext();
         t.env->CallStaticVoidMethod(t.classID,t.methodID,ctx);
-        SAFE_RELEASE_JCONTEXT(ctx);
+        SAFE_RELEASE_JOBJ(ctx);
         SAFE_RELEASE_JOBJ(t.classID);
     }
 }
@@ -212,7 +208,7 @@ void JPushService::resumePush(){
                                        ,"(Landroid/content/Context;)V" )){
         jobject ctx = getContext();
         t.env->CallStaticVoidMethod(t.classID,t.methodID,ctx);
-        SAFE_RELEASE_JCONTEXT(ctx);
+        SAFE_RELEASE_JOBJ(ctx);
         SAFE_RELEASE_JOBJ(t.classID);
     }
 }
@@ -226,7 +222,7 @@ bool JPushService::isPushStopped(){
                                        ,"(Landroid/content/Context;)Z" )){
         jobject ctx = getContext();
         isStopped = t.env->CallStaticBooleanMethod(t.classID,t.methodID,ctx);
-        SAFE_RELEASE_JCONTEXT(ctx);
+        SAFE_RELEASE_JOBJ(ctx);
         SAFE_RELEASE_JOBJ(t.classID);
     }
     return isStopped;
@@ -261,7 +257,7 @@ void JPushService::setAliasAndTags(void* p_handle,const char *alias, set<string>
         long callback_handler = (long)p_handle;
         jlong j_callback_handler = callback_handler;
         t.env->CallObjectMethod(callbackHelper,t.methodID,j_callback_handler,ctx,jalias,jtags,j_func_ptr);
-        SAFE_RELEASE_JCONTEXT(ctx);
+        SAFE_RELEASE_JOBJ(ctx);
         SAFE_RELEASE_JOBJ(jalias);
         SAFE_RELEASE_JOBJ(jtags);
         SAFE_RELEASE_JOBJ(callbackHelper);
@@ -284,7 +280,7 @@ void JPushService::setAlias(void* p_handle,const char *alias, APTagAliasCallback
         long callback_handler = (long)p_handle;
         jlong j_callback_handler = callback_handler;
         t.env->CallObjectMethod(callbackHelper,t.methodID,j_callback_handler,ctx,j_alias,j_func_ptr);
-        SAFE_RELEASE_JCONTEXT(ctx);
+        SAFE_RELEASE_JOBJ(ctx);
         SAFE_RELEASE_JOBJ(j_alias);
         SAFE_RELEASE_JOBJ(callbackHelper);
         SAFE_RELEASE_JOBJ(t.classID);
@@ -306,7 +302,7 @@ void JPushService::setTags(void* p_handle,set<string> *tags, APTagAliasCallback 
         long callback_handler = (long)p_handle;
         jlong j_callback_handler = callback_handler;
         t.env->CallObjectMethod(callbackHelper,t.methodID,j_callback_handler,ctx,jtags,j_func_ptr);
-        SAFE_RELEASE_JCONTEXT(ctx);
+        SAFE_RELEASE_JOBJ(ctx);
         SAFE_RELEASE_JOBJ(jtags);
         SAFE_RELEASE_JOBJ(callbackHelper);
         SAFE_RELEASE_JOBJ(t.classID);
@@ -351,7 +347,7 @@ const char * JPushService::registrationID(){
             ret = c_string.c_str();
             CCLog("registrationid:%s",ret);
         }
-        SAFE_RELEASE_JCONTEXT(ctx);
+        SAFE_RELEASE_JOBJ(ctx);
         SAFE_RELEASE_JOBJ(t.classID);
         
     }
@@ -367,7 +363,7 @@ void JPushService::clearAllNotifications(){
     {
         jobject ctx = getContext();
         t.env->CallStaticVoidMethod(t.classID,t.methodID,ctx);
-        SAFE_RELEASE_JCONTEXT(ctx);
+        SAFE_RELEASE_JOBJ(ctx);
         SAFE_RELEASE_JOBJ(t.classID);
     }
 }
@@ -384,7 +380,7 @@ void JPushService::clearNotificationById(int notificationId){
         jobject ctx = getContext();
         jint notificationId = notificationId;
         t.env->CallStaticVoidMethod(t.classID,t.methodID,ctx,notificationId);
-        SAFE_RELEASE_JCONTEXT(ctx);
+        SAFE_RELEASE_JOBJ(ctx);
         SAFE_RELEASE_JOBJ(t.classID);
     }
 }
@@ -401,7 +397,7 @@ void JPushService::setPushTime(set<int> *weekDays, int startHour, int endHour){
         jint jstartHour = startHour;
         jint jendHour = endHour;
         t.env->CallStaticVoidMethod(t.classID,t.methodID,ctx,jweekDays,jstartHour,jendHour);
-        SAFE_RELEASE_JCONTEXT(ctx);
+        SAFE_RELEASE_JOBJ(ctx);
         SAFE_RELEASE_JOBJ(t.classID);
     }
 }
@@ -419,7 +415,7 @@ void JPushService::setSilenceTime(int startHour, int startMinute, int endHour, i
         jint j_endHour = endHour;
         jint j_endMinute = endMinute;
         t.env->CallStaticVoidMethod(t.classID,t.methodID,ctx,j_startHour,j_startMinute,j_endHour,j_endMinute);
-        SAFE_RELEASE_JCONTEXT(ctx);
+        SAFE_RELEASE_JOBJ(ctx);
         SAFE_RELEASE_JOBJ(t.classID);
     }
 } 
@@ -434,7 +430,7 @@ void JPushService::setLatestNotifactionNumber(int maxNum){
         jobject ctx = getContext();
         jint j_maxNum = maxNum;
         t.env->CallStaticVoidMethod(t.classID,t.methodID,ctx,j_maxNum);
-        SAFE_RELEASE_JCONTEXT(ctx);
+        SAFE_RELEASE_JOBJ(ctx);
         SAFE_RELEASE_JOBJ(t.classID);
     }
 }
