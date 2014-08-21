@@ -66,25 +66,33 @@ jobject getJstringSet(std::set<std::string> *stdSet){
         return NULL;
     }
     JniMethodInfo t;
-    JniHelper::getMethodInfo(t
-                             , "java/util/HashSet"
-                             , "<init>"
-                             , "(I)V");
-    jobject ret = t.env->NewObject(t.classID, t.methodID, stdSet->size());
-    SAFE_RELEASE_JOBJ(t.classID);
-    
-    JniHelper::getMethodInfo(t
-                             , "java/util/HashSet"
-                             , "add"
-                             , "(Ljava/lang/Object;)Z");
-    
-    for (std::set<std::string>::iterator it = stdSet->begin(); it != stdSet->end(); it++) {
-        jstring k = GET_JSTRING(it->c_str());
-        t.env->CallObjectMethod(ret, t.methodID, k);
-        SAFE_RELEASE_JOBJ(k);
+    if(    JniHelper::getMethodInfo(t
+            , "java/util/HashSet"
+            , "<init>"
+            , "(I)V")){
+        jobject ret = t.env->NewObject(t.classID, t.methodID, stdSet->size());
+        SAFE_RELEASE_JOBJ(t.classID);
+        if(JniHelper::getMethodInfo(t
+                , "java/util/HashSet"
+                , "add"
+                , "(Ljava/lang/Object;)Z")){
+            for (std::set<std::string>::iterator it = stdSet->begin(); it != stdSet->end(); it++) {
+                jstring k = GET_JSTRING(it->c_str());
+                t.env->CallObjectMethod(ret, t.methodID, k);
+                SAFE_RELEASE_JOBJ(k);
+            }
+            SAFE_RELEASE_JOBJ(t.classID);
+            return ret;
+        }
+    }else{
+    	return NULL;
     }
-    SAFE_RELEASE_JOBJ(t.classID);
-    return ret;
+
+
+
+
+    
+
 }
 
 jobject getJintSet(std::set<int> *stdSet){

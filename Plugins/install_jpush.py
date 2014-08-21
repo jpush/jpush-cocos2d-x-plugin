@@ -22,12 +22,12 @@ import re
 
 
 def dumpUsage():
-    print "Usage: create_project.py -project PROJECT_NAME -package PACKAGE_NAME -appkey APP_KEY"
+    print "Usage: install_jpush.py -project PROJECT_NAME -package PACKAGE_NAME -appkey APP_KEY"
     print "Options:"
-    print "  -project   PROJECT_NAME          Project name, for example: MyGame"
-    print "  -package   PACKAGE_NAME          Package name, for example: com.MyCompany.MyAwesomeGame "
-    print "  -appkey   APP_KEY          APP_KEY for JPush portal "
-    print "Sample 1: ./create_project.py -project -package com.MyCompany.AwesomeGame PROJECT_NAME -appkey APP_KEY "
+    print "  -project    Project name, for example: MyGame"
+    print "  -package    Package name, for example: com.MyCompany.MyAwesomeGame "
+    print "  -appkey     APP key for JPush portal "
+    print "Sample 1: ./install_jpush.py -project pluginTest -package com.MyCompany.AwesomeGame PROJECT_NAME -appkey 997f28c1cea5a9f17d82079a "
 
 # end of dumpUsage(context) function
 
