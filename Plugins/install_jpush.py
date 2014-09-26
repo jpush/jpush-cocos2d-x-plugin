@@ -74,10 +74,8 @@ def checkParams(context):
     context["src_project_path"] = os.getcwd() + "/Android/"
 # end of checkParams(context) function
 def copyToProjcect():
-    #print "copying To Project"
     libSource=context["src_project_path"]+"libs/jpush-sdk-release1.6.4.jar"
     libTarget=context["dst_project_path"]+context["dst_project_name"]+"/proj.android/libs/"
-    # print(libTarget)
     if not os.path.exists(libTarget):
         os.makedirs(libTarget)
     else:
@@ -86,7 +84,6 @@ def copyToProjcect():
         for directory in glob.glob(libTarget+"/armeabi*/"):
             shutil.rmtree(directory)
     shutil.copy(libSource,libTarget)
-    #print "copy jpush libs done!"
     prebuildSource=context["src_project_path"]+"libs/prebuild/"
     prebuildTarget=context["dst_project_path"]+context["dst_project_name"]+"/proj.android/jni/prebuild/"
     if os.path.exists(prebuildTarget):
@@ -102,11 +99,9 @@ def copyToProjcect():
     shutil.copytree(soSource,soTarget)
     shutil.copytree(v7aSoSource,v7aSoTarget)
 
-    #print "copy prebuild done!"
 #libs/jpush-sdk-release1.6.1.jar to libs
 # end of copyToProjcect(context) function
 def copyTextToAndroidmk():
-    #print "copying Text to Android.mk"
     mkTargetPath=context["dst_project_path"]+context["dst_project_name"]+"/proj.android/jni/Android.mk"
     fp=file(mkTargetPath)
     lines=[]
@@ -134,12 +129,6 @@ def copyTextToAndroidmk():
         if line.find("JPushService.cpp")>=0:
             isExit=1
             break
-    print(isExit)
-    print(lines)
-    
-    print("|")
-    print("|")
-    print("|")
     if isExit==0:
         i=0
         for linesub in lines:
@@ -149,15 +138,12 @@ def copyTextToAndroidmk():
                 lines.insert(i,"                    JPushService.cpp \\");
                 lines.insert(i+1,"\n");
                 break
-    print(lines)
     fp=file(mkTargetPath,'w')
     for s in lines:   
         fp.write(s)
     fp.close()
-    #print "copy to Android.mk done"
 # end of copyTextToAndroidmk(context) function
 def copyCodeToProject():
-    #print "copying code to Project"
     hfileSource = context["src_project_path"]+"../JPushService.h"
     hfileTarget = context["dst_project_path"]+context["dst_project_name"]+"/Classes/JPushService.h"
     hfileTargetPath = context["dst_project_path"]+context["dst_project_name"]+"/Classes/"
@@ -186,10 +172,8 @@ def copyCodeToProject():
         os.remove(javafileTarget)
     shutil.copy(javafileSource,javafileTarget)
 
-    #print "copy code to project done!"
 # end of copyTextToAndroidmk(context) function
 def writeManifest():
-    #print "copying Manifest"
     data = """<?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="Your_Package_Name"
@@ -304,14 +288,12 @@ def writeManifest():
 
 
 #for element in first_root.iter():
-#   print element.tag,element.attrib
 
     tree = ET.ElementTree(first_root)
     tree.write(manifest,"utf-8",xml_declaration=True)
-    #print "copy Manifest done"
 # end of writeManifest() function
+
 def replacePackageName():
-    #print "replacing package name"
     pushserverTarget = context["dst_project_path"]+context["dst_project_name"]+"/proj.android/jni/JPushService.cpp"
     originString = context['dst_package_name']
     nameFunction = originString.replace('.','_');
@@ -343,22 +325,17 @@ def fixMainActivity():
     i=0
     for line in fp:
         lines.append(line)
-        # print "index is %d cotent :%s" %(i,line)
         i+=1
         if line.find("android.content.Context;")>=0:
             resultExist=1
-            # print "find target %s" %(line)
     fp.close()
     if resultExist==0:
         i=0
         for line in lines:
             i+=1
             if line.find("import")>=0:
-                print("finded import")
                 break
         lines.insert(i,"import android.content.Context;\n")
-        # print("insert success")
-    # print("already include android.content.Context;")
     i=0
     for line in lines:
         i=i+1
@@ -378,9 +355,29 @@ def fixMainActivity():
     for s in lines:
         fp.write(s)
     fp.close()
-    #print "fix main activity done"
 
 # end of fixMainActivity() function
+def fixJPushCallbackHelper():
+    javafileTarget = context["dst_project_path"]+context["dst_project_name"]+"/proj.android/src/"
+    path=context['dst_package_name'].replace('.','/')
+    javafileTarget=javafileTarget+path+'/'+'JPushCallbackHelper.java'
+    fp=file(javafileTarget)
+    lines=[]
+    for line in fp:
+        lines.append(line)
+    fp.close()
+    isExist=0
+    for line in lines:
+        if line.find("package")>=0:
+            isExist=1
+            break
+    if isExist==0:
+        lines.insert(0,"package "+context["dst_package_name"]+";\n")
+    fp=file(javafileTarget,"w")
+    for line in lines:
+        fp.write(line)
+    fp.close()
+#end of fixJPushCallbackHelper() function
 # -------------- main --------------
 # dump argvs
 # print sys.argv
@@ -391,4 +388,5 @@ copyCodeToProject();
 writeManifest();
 replacePackageName();
 fixMainActivity();
+fixJPushCallbackHelper();
 print "The JPush SDK has been successfully import in your project,have fun!"
