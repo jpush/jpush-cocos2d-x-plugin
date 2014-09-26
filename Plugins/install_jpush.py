@@ -336,21 +336,26 @@ def fixMainActivity():
             if line.find("import")>=0:
                 break
         lines.insert(i,"import android.content.Context;\n")
-    i=0
+    isAdded=0
     for line in lines:
-        i=i+1
-        if line.find('{')>=0:
-            break;
-    lines.insert(i,  "	public static Context STATIC_REF = null;\n")
-    lines.insert(i+1,"	public static Context getContext(){\n")
-    lines.insert(i+2,"  	return STATIC_REF;\n")
-    lines.insert(i+4,"	}\n")
-    i=0
-    for line in lines:
-        i=i+1
-        if line.find("super.onCreate")>=0:
-            break;
-    lines.insert(i, "		STATIC_REF = this.getApplicationContext();\n");
+        if line.find("public static Context STATIC_REF = null")>0:
+            isAdded=1;
+    if isAdded==0:
+        i=0
+        for line in lines:
+            i=i+1
+            if line.find('{')>=0:
+                break;
+        lines.insert(i,  "      public static Context STATIC_REF = null;\n")
+        lines.insert(i+1,"      public static Context getContext(){\n")
+        lines.insert(i+2,"      return STATIC_REF;\n")
+        lines.insert(i+4,"  }\n")
+        i=0
+        for line in lines:
+            i=i+1
+            if line.find("super.onCreate")>=0:
+                break;
+        lines.insert(i, "       STATIC_REF = this.getApplicationContext();\n");
     fp=file(javafileTarget,'w')
     for s in lines:
         fp.write(s)
