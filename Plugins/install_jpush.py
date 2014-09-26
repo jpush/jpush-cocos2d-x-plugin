@@ -77,6 +77,7 @@ def copyToProjcect():
     #print "copying To Project"
     libSource=context["src_project_path"]+"libs/jpush-sdk-release1.6.4.jar"
     libTarget=context["dst_project_path"]+context["dst_project_name"]+"/proj.android/libs/"
+    # print(libTarget)
     if not os.path.exists(libTarget):
         os.makedirs(libTarget)
     else:
@@ -112,37 +113,43 @@ def copyTextToAndroidmk():
     for line in fp: 
         lines.append(line)
     fp.close()
-    i=0
-    startRepeat=-1;
-    endRepeat=-1;
-    for repeatContent in lines:
-        if repeatContent.find("include $(LOCAL_PATH)/prebuild/Android.mk"):
-            startRepeat=i
-        if repeatContent.find("                 JPushService.cpp \\"):
-            endRepeat=i
-        i+=1
-    if startRepeat>0 and endRepeat >0 and endRepeat > startRepeat:
-        del lines[startRepeat:endRepeat+1]
+
     i=0
     for content in lines:
-        i=i+1
-        if content.find("include $(BUILD_SHARED_LIBRARY)") >= 0:
+        if content.find("Android.mk") >= 0:
+            del lines[i]
             break
-    lines.insert(i, "include $(LOCAL_PATH)/prebuild/Android.mk")
-    i=i+1
-    lines.insert(i,"\n")
-    i=i+1
-    lines.insert(i, "LOCAL_SHARED_LIBRARIES := jpush_so");
-    i=i+1
-    lines.insert(i,"\n")
+        i=i+1
+    # i=i+1
+    # lines.insert(i, "LOCAL_SHARED_LIBRARIES := jpush_so");
+    # i=i+1
+    # lines.insert(i,"\n")
     i=0
-    for linesub in lines:
-        i=i+1
-        if linesub.find("hellocpp/main.cpp")>=0:
+    for line in lines:
+        if line.find("LOCAL_SHARED_LIBRARIES := jpush_so")>=0:
+            del lines[i]
+        i+=1
+    isExit=0
+    for line in lines:
+        if line.find("JPushService.cpp")>=0:
+            isExit=1
             break
-    lines.insert(i,"					JPushService.cpp \\");
-    i=i+1;
-    lines.insert(i,"\n");
+    print(isExit)
+    print(lines)
+    
+    print("|")
+    print("|")
+    print("|")
+    if isExit==0:
+        i=0
+        for linesub in lines:
+            i=i+1
+            if linesub.find("hellocpp/main.cpp")>=0:
+                print "index i %d,line is %s" %(i,line)
+                lines.insert(i,"                    JPushService.cpp \\");
+                lines.insert(i+1,"\n");
+                break
+    print(lines)
     fp=file(mkTargetPath,'w')
     for s in lines:   
         fp.write(s)
