@@ -119,7 +119,6 @@ JPush's officially supported Cocos2d-x plugin (Android &amp; iOS). 极光推送�
 ---------------------------------------------------------------------------
 ## 集成 JPush Cocos2d-x Android SDK
 
-
 ####执行脚本
 * 将下载下来的`jpush-cocos2d-x-plugin`文件夹拖到`{COCOS2DX_ROOT}/plugin/plugins`目录下。
 * 执行`jpush-cocos2d-x-plugin/Plugins/install_jpush.py`
@@ -185,14 +184,12 @@ JPush SDK 提供的 API 接口,都主要集中在 JPushService.h 类里。只需
 
 #### 常见问题
 
-##### multiple definition of 'getCallbackHelperObject
+* 如何升级cocos2d-x plugin for android插件
 
-解决方法：检查文件**jni/Android.mk**中**LOCAL_SRC_FILES :**是否重复包含`JPushService.cpp`
+	将`{COCOS2DX_ROOT}/plugin/plugins/jpush-cocos2d-x-plugin`文件夹删除，再按照上面的文档集成执行install_jpush.py脚本即可
+* c++接口的怎么调用？
 
-引起原因：可能是执行了多次jpush-cocos2dx-plugin插件中的安装脚本
-
-
-
+	c++的函数名称与java方法想对应，具体请参照[JPush文档: android的API](http://docs.jpush.cn/display/dev/API%3A+Android)
 ##高级功能 
 请参考:[android 标签与别名API](http://docs.jpush.cn/pages/viewpage.action?pageId=557241)
 [android 接收推送消息](http://docs.jpush.cn/pages/viewpage.action?pageId=1343602)
