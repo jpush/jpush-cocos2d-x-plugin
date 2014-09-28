@@ -27,7 +27,7 @@ def compare_xml(left, right, key_info='.'):
     main_pid = 10000  
     loop_depth = 0  
     loop_depth += 1  
-    if loop_depth == 1: print  "loop depth==1"
+    # if loop_depth == 1: print  "loop depth==1"
     if left.tag != right.tag:  
         OK = print_diff(main_pid, key_info, 'difftag', left.tag, right.tag)  
         return OK
@@ -79,7 +79,7 @@ def compare_xml(left, right, key_info='.'):
 def print_diff(main_pid, key_info, msg, base_type, test_type):  
     info = u'[ %-5s ] %s -> %-40s [ %s != %s ]'%(msg.upper(), main_pid, key_info.strip('./'), base_type, test_type)  
     # print info.encode('gbk')
-    print info
+    # print info
     return False  
 
 #end of xml compare function()
@@ -143,7 +143,7 @@ def copyToProjcect():
     else:
         for f in glob.glob(libTarget+"/jpush-sdk-release*.jar"):
             os.remove(f)
-        for directory in glob.glob(libTarget+"/armeabi*/"):
+        for directory in glob.glob(libTarget+"/armeabi/jpush*.*"):
             shutil.rmtree(directory)
     shutil.copy(libSource,libTarget)
     prebuildSource=context["src_project_path"]+"libs/prebuild/"
@@ -152,14 +152,18 @@ def copyToProjcect():
         shutil.rmtree(prebuildTarget)
     shutil.copytree(prebuildSource,prebuildTarget)
 
-    soSource=context["src_project_path"]+"libs/armeabi"
-    v7aSoSource=context["src_project_path"]+"libs/armeabi-v7a"
+    # soSource=context["src_project_path"]+"libs/armeabi/libjpush164.so"
+    # v7aSoSource=context["src_project_path"]+"libs/armeabi-v7a"
 
-    soTarget=context["dst_project_path"]+context["dst_project_name"]+"/proj.android/libs/armeabi"
-    v7aSoTarget=context["dst_project_path"]+context["dst_project_name"]+"/proj.android/libs/armeabi-v7a"
+    # soTarget=context["dst_project_path"]+context["dst_project_name"]+"/proj.android/libs/armeabi/"
+    # if (os.path.exists(soTarget) == False):
+    #     os.makedirs(soTarget)       
+    # soTarget+="libjpush164.so"
 
-    shutil.copytree(soSource,soTarget)
-    shutil.copytree(v7aSoSource,v7aSoTarget)
+    # v7aSoTarget=context["dst_project_path"]+context["dst_project_name"]+"/proj.android/libs/armeabi-v7a"
+
+    # shutil.copyfile(soSource,soTarget)
+    # shutil.copytree(v7aSoSource,v7aSoTarget)
 
 #libs/jpush-sdk-release1.6.1.jar to libs
 # end of copyToProjcect(context) function
@@ -170,34 +174,40 @@ def copyTextToAndroidmk():
     for line in fp: 
         lines.append(line)
     fp.close()
-
+    # delete Android.mk and LOCAL_SHARED_LIBRARIES
     i=0
     for content in lines:
         if content.find("Android.mk") >= 0:
             del lines[i]
             break
-        i=i+1
-    # i=i+1
-    # lines.insert(i, "LOCAL_SHARED_LIBRARIES := jpush_so");
-    # i=i+1
-    # lines.insert(i,"\n")
+        i+=1
     i=0
     for line in lines:
         if line.find("LOCAL_SHARED_LIBRARIES := jpush_so")>=0:
             del lines[i]
+            break
         i+=1
-    isExit=0
+    #add new Android.mk file
+    i=0
+    for content in lines:
+        i=i+1
+        if content.find("include $(BUILD_SHARED_LIBRARY)") >= 0:
+            break
+    lines.insert(i, "include $(LOCAL_PATH)/prebuild/Android.mk\n")
+    i=i+1
+    lines.insert(i, "LOCAL_SHARED_LIBRARIES := jpush_so\n");
+    #add jpush service cpp
+    isExit=False
     for line in lines:
         if line.find("JPushService.cpp")>=0:
-            isExit=1
+            isExit=True
             break
-    if isExit==0:
+    if isExit==False:
         i=0
         for linesub in lines:
             i=i+1
             if linesub.find("hellocpp/main.cpp")>=0:
-                lines.insert(i,"                    JPushService.cpp \\");
-                lines.insert(i+1,"\n");
+                lines.insert(i,"                    JPushService.cpp \\\n");
                 break
     fp=file(mkTargetPath,'w')
     for s in lines:   
@@ -347,10 +357,9 @@ def writeManifest():
             if compare_xml(subPermission,subPermissionFirst):
                 isExist=True
                 break;
-        print "isExist:",isExist
         if isExist==False:
             addPermission.append("subPermission")
-    first_root.extend(permission)
+    first_root.extend(addPermission)
 
     ele = second_root.find('application')
     app_ele = first_root.find('application')
@@ -380,11 +389,11 @@ def writeManifest():
                 break
             j+=1
         if isExist==False:
-            print "end a time of compare index :",i,"compare result:",isExist
+            # print "end a time of compare index :",i,"compare result:",isExist
             addPermission.append(subPermission)
         i+=1
     first_root.extend(addPermission)
-    print "end fix manifest"
+    # print "end fix manifest"
 #for element in first_root.iter():
 
     tree = ET.ElementTree(first_root)
