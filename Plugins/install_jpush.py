@@ -21,6 +21,68 @@ import sys
 import re
 import glob
 
+
+def compare_xml(left, right, key_info='.'):
+    OK=True  
+    main_pid = 10000  
+    loop_depth = 0  
+    loop_depth += 1  
+    if loop_depth == 1: print  "loop depth==1"
+    if left.tag != right.tag:  
+        OK = print_diff(main_pid, key_info, 'difftag', left.tag, right.tag)  
+        return OK
+    if left.text != right.text:  
+        OK = print_diff(main_pid, key_info, 'difftext', left.text, right.text)  
+        return OK
+    leftitems = dict(left.items())
+    rightitems = dict(right.items())
+    for k,v in leftitems.items():
+        if k not in rightitems:
+            s = '%s/%s' % (key_info, left.tag)  
+            OK=print_diff(main_pid, s, 'lostattr', k, "")
+            return OK
+        if v!=rightitems[k]:
+            s = '%s/%s' % (key_info, left.tag)  
+            OK=print_diff(main_pid, s, 'lostattr', k, "")
+            return OK
+    for k,v in rightitems.items():  
+        if k not in leftitems:  
+            s = '%s/%s' % (key_info, right.tag)  
+            OK=print_diff(main_pid, s, 'extraattr', "", k)
+            return OK
+        if v!=leftitems[k]:
+            s = '%s/%s' % (key_info, right.tag)  
+            OK=print_diff(main_pid, s, 'extraattr', "", k)
+            return OK
+    leftnodes = left.getchildren()  
+    rightnodes = right.getchildren()  
+    leftlen = len(leftnodes)  
+    rightlen = len(rightnodes)  
+    if leftlen != rightlen:  
+        s = '%s/%s' % (key_info, right.tag)  
+        OK=print_diff(main_pid, s, 'difflen', leftlen, rightlen)  
+        return OK
+    l = leftlen<rightlen and leftlen or rightlen  
+    d = {}  
+    for i in xrange(l):
+        node=leftnodes[i]
+        if node.tag not in d:
+            d[node.tag] = 1
+            tag = node.tag
+        else:  
+            tag = node.tag + str(d[node.tag])
+            d[node.tag] += 1
+        s = '%s/%s' % (key_info, tag)  
+        OK = compare_xml(leftnodes[i], rightnodes[i], s)
+    return OK
+
+def print_diff(main_pid, key_info, msg, base_type, test_type):  
+    info = u'[ %-5s ] %s -> %-40s [ %s != %s ]'%(msg.upper(), main_pid, key_info.strip('./'), base_type, test_type)  
+    # print info.encode('gbk')
+    print info
+    return False  
+
+#end of xml compare function()
 def dumpUsage():
     print "Usage: install_jpush.py -project PROJECT_NAME -package PACKAGE_NAME -appkey APP_KEY"
     print "Options:"
@@ -134,7 +196,6 @@ def copyTextToAndroidmk():
         for linesub in lines:
             i=i+1
             if linesub.find("hellocpp/main.cpp")>=0:
-                print "index i %d,line is %s" %(i,line)
                 lines.insert(i,"                    JPushService.cpp \\");
                 lines.insert(i+1,"\n");
                 break
@@ -258,7 +319,7 @@ def writeManifest():
     <uses-permission android:name="android.permission.VIBRATE" />
     <uses-permission android:name="android.permission.MOUNT_UNMOUNT_FILESYSTEMS" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
- 
+    <uses-permission android:name="android.permission.WRITE_SETTINGS" />
 </manifest>"""
 
     ET.register_namespace("android","http://schemas.android.com/apk/res/android")
@@ -269,7 +330,7 @@ def writeManifest():
     tree_one = ET.parse(manifest)
     first_root = tree_one.getroot()
     package_name = first_root.attrib['package']
-
+        
     data = re.sub('Your_Package_Name',package_name,data,flags=re.I)
     data =re.sub('app_key',appKey,data,flags=re.I)
 
@@ -277,16 +338,53 @@ def writeManifest():
     second_root = tree_two.getroot()
 
     permission = second_root.findall('permission')
+    permissionFirst = first_root.findall("permission")
+    addPermission=[]
+    for subPermission in permission:
+        # print subPermission.tag,subPermission.attrib
+        isExist=False
+        for subPermissionFirst in permissionFirst:
+            if compare_xml(subPermission,subPermissionFirst):
+                isExist=True
+                break;
+        print "isExist:",isExist
+        if isExist==False:
+            addPermission.append("subPermission")
     first_root.extend(permission)
 
     ele = second_root.find('application')
     app_ele = first_root.find('application')
-    app_ele.extend(ele)
+    addEle=[]
+    for subEle in ele:
+        # print subEle.tag,subEle.attrib
+        isExist=False
+        for subApp_ele in app_ele:
+            if compare_xml(subEle,subApp_ele):
+                isExist=True
+                break
+        if isExist==False:
+            addEle.append(subEle)
+    app_ele.extend(addEle)
+    #app_ele.extend(ele)
 
     permission = second_root.findall('uses-permission')
-    first_root.extend(permission)
-
-
+    permissionFirst = first_root.findall("uses-permission")
+    addPermission=[]
+    i=0
+    for subPermission in permission:
+        isExist=False
+        j=0
+        for subPermissionFirst in permissionFirst:
+            if compare_xml(subPermission,subPermissionFirst):
+                isExist = True
+                break
+            j+=1
+        if isExist==False:
+            print "end a time of compare index :",i,"compare result:",isExist
+            addPermission.append(subPermission)
+        i+=1
+    first_root.extend(addPermission)
+    print "end fix manifest"
 #for element in first_root.iter():
 
     tree = ET.ElementTree(first_root)
@@ -383,6 +481,7 @@ def fixJPushCallbackHelper():
         fp.write(line)
     fp.close()
 #end of fixJPushCallbackHelper() function
+
 # -------------- main --------------
 # dump argvs
 # print sys.argv
