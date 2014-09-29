@@ -12,11 +12,14 @@ JPush's officially supported Cocos2d-x plugin (Android &amp; iOS). 极光推送�
 
 * 添加必要的框架
 
-		CoreTelephony.framework
-		Security.framework
 		CFNetwork.framework
 		CoreFoundation.framework
-		SystemConfiguration.framework
+		CoreTelephony.framework
+		CoreGraphics.framework
+		Foundation.framework
+		UIKit.framework
+		Security.framework
+		libz.dylib
 
 * 创建并配置PushConfig.plist文件，在你的工程中创建一个新的Property List文件，并将其命名为PushConfig.plist，填入Portal为你的应用提供的APP_KEY等参数。
 
@@ -50,9 +53,27 @@ JPush's officially supported Cocos2d-x plugin (Android &amp; iOS). 极光推送�
 		
 		
 		// Required
-		[APService registerForRemoteNotificationTypes:UIRemoteNotificationTypeBadge |
-									UIRemoteNotificationTypeSound | 
-									UIRemoteNotificationTypeAlert];
+		#if __IPHONE_OS_VERSION_MAX_ALLOWED > __IPHONE_7_1
+		    if ([[UIDevice currentDevice].systemVersion floatValue] >= 8.0) {
+		        //可以添加自定义categories
+		        [APService registerForRemoteNotificationTypes:(UIUserNotificationTypeBadge |
+		                                                       UIUserNotificationTypeSound |
+		                                                       UIUserNotificationTypeAlert)
+		                                           categories:nil];
+		        } else {
+		            //categories 必须为nil
+		            [APService registerForRemoteNotificationTypes:(UIRemoteNotificationTypeBadge |
+		                                                           UIRemoteNotificationTypeSound |
+		                                                           UIRemoteNotificationTypeAlert)
+		                                               categories:nil];
+		        }
+		#else
+		        //categories 必须为nil
+		        [APService registerForRemoteNotificationTypes:(UIRemoteNotificationTypeBadge |
+		                                                       UIRemoteNotificationTypeSound |
+		                                                       UIRemoteNotificationTypeAlert)
+		                                           categories:nil];
+		#endif
 		// Required
      	[APService setupWithOption:launchOptions];
     	......
@@ -119,6 +140,7 @@ JPush's officially supported Cocos2d-x plugin (Android &amp; iOS). 极光推送�
 ---------------------------------------------------------------------------
 ## 集成 JPush Cocos2d-x Android SDK
 
+
 ####执行脚本
 * 将下载下来的`jpush-cocos2d-x-plugin`文件夹拖到`{COCOS2DX_ROOT}/plugin/plugins`目录下。
 * 执行`jpush-cocos2d-x-plugin/Plugins/install_jpush.py`
@@ -184,12 +206,14 @@ JPush SDK 提供的 API 接口,都主要集中在 JPushService.h 类里。只需
 
 #### 常见问题
 
-* 如何升级cocos2d-x plugin for android插件
+##### multiple definition of 'getCallbackHelperObject
 
-	将`{COCOS2DX_ROOT}/plugin/plugins/jpush-cocos2d-x-plugin`文件夹删除，再按照上面的文档集成执行install_jpush.py脚本即可
-* c++接口的怎么调用？
+解决方法：检查文件**jni/Android.mk**中**LOCAL_SRC_FILES :**是否重复包含`JPushService.cpp`
 
-	c++的函数名称与java方法想对应，具体请参照[JPush文档: android的API](http://docs.jpush.cn/display/dev/API%3A+Android)
+引起原因：可能是执行了多次jpush-cocos2dx-plugin插件中的安装脚本
+
+
+
 ##高级功能 
 请参考:[android 标签与别名API](http://docs.jpush.cn/pages/viewpage.action?pageId=557241)
 [android 接收推送消息](http://docs.jpush.cn/pages/viewpage.action?pageId=1343602)
