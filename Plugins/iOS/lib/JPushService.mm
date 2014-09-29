@@ -258,27 +258,27 @@ static void *setAliasTagsHandle = nil;
   NSNotificationCenter *defaultCenter = [NSNotificationCenter defaultCenter];
   [defaultCenter addObserver:self
                     selector:@selector(networkDidSetup:)
-                        name:kAPNetworkDidSetupNotification
+                        name:kJPFNetworkDidSetupNotification
                       object:nil];
   [defaultCenter addObserver:self
                     selector:@selector(networkDidClose:)
-                        name:kAPNetworkDidCloseNotification
+                        name:kJPFNetworkDidCloseNotification
                       object:nil];
   [defaultCenter addObserver:self
                     selector:@selector(networkDidRegister:)
-                        name:kAPNetworkDidRegisterNotification
+                        name:kJPFNetworkDidRegisterNotification
                       object:nil];
   [defaultCenter addObserver:self
                     selector:@selector(networkDidLogin:)
-                        name:kAPNetworkDidLoginNotification
+                        name:kJPFNetworkDidLoginNotification
                       object:nil];
   [defaultCenter addObserver:self
                     selector:@selector(networkDidReceiveMessage:)
-                        name:kAPNetworkDidReceiveMessageNotification
+                        name:kJPFNetworkDidReceiveMessageNotification
                       object:nil];
   [defaultCenter addObserver:self
                     selector:@selector(serviceError:)
-                        name:kAPServiceErrorNotification
+                        name:kJPFServiceErrorNotification
                       object:nil];
 }
 
@@ -459,7 +459,7 @@ void JPushService::registerLoginCallbackFunction(
 /*
  *   set message callback function
  */
-void JPushService::registerCallbackFunction(
+void JPushService::registerReceiveMessageCallbackFunction(
     void *p_handle, APNetworkDidReceiveMessage_callback message_callback) {
   callbackController.receiveMessageCallback = message_callback;
   receiveMessageHandle = p_handle;
@@ -553,3 +553,10 @@ const char *JPushService::openUDID() {
 const char *JPushService::registrationID() {
   return [[APService registrionID] UTF8String];
 }
+void JPushService::setDebugMode(){
+    [APService setDebugMode];
+}
+void JPushService::setLogOFF(){
+    [APService setLogOFF];
+}
+

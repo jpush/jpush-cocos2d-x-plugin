@@ -62,6 +62,8 @@ class JPushService {
       void *p_handle, APNetworkDidRegister_callback register_callback);
   static void registerLoginCallbackFunction(
       void *p_handle, APNetworkDidLogin_callback login_callback);
+  static void registerReceiveMessageCallbackFunction(void *p_handle, APNetworkDidReceiveMessage_callback message_callback);
+
   /**
    *  记录页面停留时间功能。
    *  pageStart和pageEnd为自动计算停留时间
@@ -78,6 +80,17 @@ class JPushService {
    *  get the UDID
    */
   static const char *openUDID();  // UDID
+  /**
+    *  当需要了解更多的调试信息时候，调用API开启Debug模式
+    */
+  static void setDebugMode();
+  /**
+    *  API用来关闭日志信息（除了必要的错误信息）
+    */
+  static void setLogOFF();
+  
+
+
 #endif
 #if(CC_TARGET_PLATFORM == CC_PLATFORM_ANDROID)
   //注册，推送
