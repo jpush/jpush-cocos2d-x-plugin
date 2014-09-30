@@ -208,10 +208,13 @@ JPush SDK 提供的 API 接口,都主要集中在 JPushService.h 类里。只需
 
 ##### multiple definition of 'getCallbackHelperObject
 
-解决方法：检查文件**jni/Android.mk**中**LOCAL_SRC_FILES :**是否重复包含`JPushService.cpp`
+* 检查文件**jni/Android.mk**中**LOCAL_SRC_FILES :**是否重复包含**JPushService.cpp**
 
-引起原因：可能是执行了多次jpush-cocos2dx-plugin插件中的安装脚本
+#####如何升级cocos2d-x plugin for android插件		
+* 将`{COCOS2DX_ROOT}/plugin/plugins/jpush-cocos2d-x-plugin`文件夹删除，再按照上面的集成文档执行install_jpush.py脚本即可		
 
+##### c++接口的怎么调用？
+* c++的函数名称与java方法相对应，具体请参照[JPush文档: android的API](http://docs.jpush.cn/display/dev/API%3A+Android)
 
 
 ##高级功能 
