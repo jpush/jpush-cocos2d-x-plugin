@@ -38,7 +38,7 @@ JPush's officially supported Cocos2d-x plugin (Android &amp; iOS). 极光推送�
 
 *	在XCode中选择“Add files to 'Your project name'...”，将lib子文件夹中的libPushSDK.a添加到你的工程目录中。
   
-*	将Plugins/iOS/lib 文件夹下的 APServer.h，APServiceCpp.h,APServiceCpp.mm拖入 project 中(或者点击右键，点击 add files to "project name")，APServer.h拖入Class文件夹中,和安卓共享同一个，APServiceCpp.h,APServiceCpp.mm拖入ios文件夹下.
+*	将Plugins/iOS/lib 文件夹下的 APServer.h，libPushSDK.a,APServiceCpp.mm拖入 project 中(或者点击右键，点击 add files to "project name")，将将Plugins/APServer.h拖入Class文件夹中,和安卓共享同一个.
 
 #### 2. 添加代码
 
@@ -201,8 +201,13 @@ JPush SDK 提供的 API 接口,都主要集中在 JPushService.h 类里。只需
 向JPushService注册此回调函数，具体字段可参考`JPushReceiver.java`类。
 
 #### 测试确认
-1. 确认所需的权限都已经添加。如果必须的权限未添加,日志会提示错误。2. 确认 AppKey(在Portal上生成的)已经正确的写入 Androidmanifest.xml 。
-3. 确认在程序启动时候调用了init() 接口4. 确认测试手机(或者模拟器)已成功连入网络客户端调用 init 后不久,如果一切正常,应有登录成功的日志信息5. 启动应用程序,在 Portal 上向应用程序发送自定义消息或者通知栏提示。详情请参考管理Portal。在几秒内,客户端应可收到下发的通知或者正定义消息.
+1. 确认所需的权限都已经添加。如果必须的权限未添加,日志会提示错误。
+2. 确认 AppKey(在Portal上生成的)已经正确的写入 Androidmanifest.xml 。
+3. 确认在程序启动时候调用了init() 接口
+4. 确认测试手机(或者模拟器)已成功连入网络
+客户端调用 init 后不久,如果一切正常,应有登录成功的日志信息
+5. 启动应用程序,在 Portal 上向应用程序发送自定义消息或者通知栏提示。详情请参考管理Portal。
+在几秒内,客户端应可收到下发的通知或者正定义消息.
 
 #### 常见问题
 
@@ -218,15 +223,18 @@ JPush SDK 提供的 API 接口,都主要集中在 JPushService.h 类里。只需
 
 
 ##高级功能 
-请参考:[android 标签与别名API](http://docs.jpush.cn/pages/viewpage.action?pageId=557241)
-[android 接收推送消息](http://docs.jpush.cn/pages/viewpage.action?pageId=1343602)
+请参考:
+
+[android 标签与别名API](http://docs.jpush.cn/pages/viewpage.action?pageId=557241)
+[android 接收推送消息](http://docs.jpush.cn/pages/viewpage.action?pageId=1343602)
 
 [ios 标签与别名API](http://docs.jpush.cn/pages/viewpage.action?pageId=3309913)
 
 [ios 接收推送消息](http://docs.jpush.cn/pages/viewpage.action?pageId=3310013)
 
-##技术支持
-邮件联系:<support@jpush.cn> 
+##技术支持
+邮件联系:<support@jpush.cn> 
+
 技术QQ群:132992583
 
 
