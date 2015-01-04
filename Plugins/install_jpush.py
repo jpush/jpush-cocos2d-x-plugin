@@ -358,7 +358,7 @@ def writeManifest():
                 isExist=True
                 break;
         if isExist==False:
-            addPermission.append("subPermission")
+            addPermission.append(subPermission)
     first_root.extend(addPermission)
 
     ele = second_root.find('application')
