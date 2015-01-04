@@ -136,7 +136,7 @@ def checkParams(context):
     context["src_project_path"] = os.getcwd() + "/Android/"
 # end of checkParams(context) function
 def copyToProjcect():
-    libSource=context["src_project_path"]+"libs/jpush-sdk-release1.6.4.jar"
+    libSource=context["src_project_path"]+"libs/jpush-sdk-release1.7.1.jar"
     libTarget=context["dst_project_path"]+context["dst_project_name"]+"/proj.android/libs/"
     if not os.path.exists(libTarget):
         os.makedirs(libTarget)
@@ -358,7 +358,7 @@ def writeManifest():
                 isExist=True
                 break;
         if isExist==False:
-            addPermission.append("subPermission")
+            addPermission.append(subPermission)
     first_root.extend(addPermission)
 
     ele = second_root.find('application')
