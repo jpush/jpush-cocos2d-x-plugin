@@ -221,6 +221,25 @@ JPush SDK 提供的 API 接口,都主要集中在 JPushService.h 类里。只需
 ##### c++接口的怎么调用？
 * c++的函数名称与java方法相对应，具体请参照[JPush文档: android的API](http://docs.jpush.cn/display/dev/API%3A+Android)
 
+##### 在android的工程中加了其他的SDK时，重新编译时，其他SDK的so文件消息怎么办？
+
+引起的原因:是因为libs/armeabi目录大小发生较大的变化时，每次编译会更新这个目录，导致我们的第三方库被删除
+
+解决方案：
+
+1. 在[your_android_project]/jni/preduild/Android.mk文件中 加入
+		
+		include $(CLEAR_VARS)
+		LOCAL_MODULE := your_module
+		LOCAL_SRC_FILES := your_project.so
+		include $(PREBUILT_SHARED_LIBRARY)
+
+2. 在[your_android_project]/jni/Andorid.mk中找到`LOCAL_SHARED_LIBRARIES := jpush_so
+`将其修改成：
+
+		LOCAL_SHARED_LIBRARIES := jpush_so your_project_so
+
+
 
 ##高级功能 
 请参考:
