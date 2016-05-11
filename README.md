@@ -1,5 +1,8 @@
 jpush-cocos2d-x-plugin
 ======================
+[![Gitter](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/jpush/jpush-phonegap-plugin)
+[![platforms](https://img.shields.io/badge/platforms-iOS%7CAndroid-lightgrey.svg)](https://github.com/jpush/jpush-cocos2d-x-plugin)
+[![weibo](https://img.shields.io/badge/weibo-JPush-blue.svg)](http://weibo.com/jpush?refer_flag=1001030101_&is_all=1)
 
 JPush's officially supported Cocos2d-x plugin (Android &amp; iOS). 极光推送官方支持的 Cocos2d-x 插件（Android &amp; iOS）。
 
@@ -8,9 +11,9 @@ JPush's officially supported Cocos2d-x plugin (Android &amp; iOS). 极光推送�
 -----------------------
 #### 1. 配置基本信息
 
-* 使用cocos2d-x脚本生成iOS工程,并打开该工程
+* 使用 cocos2d-x 脚本生成 iOS 工程
 
-* 添加必要的框架
+* 添加必要框架。打开 xcode，点击 project，选择 (Targets -> Build Phases -> Link Binary With Libraries)
 
 		CFNetwork.framework
 		CoreFoundation.framework
@@ -19,34 +22,23 @@ JPush's officially supported Cocos2d-x plugin (Android &amp; iOS). 极光推送�
 		Foundation.framework
 		UIKit.framework
 		Security.framework
-		libz.dylib
+		libz.tbd//若原先有 libz.dylib 则替换为 libz.tbd
+		AdSupport.framework//若需要使用 IDFA 广告标识符则添加该库
 
-* 创建并配置PushConfig.plist文件，在你的工程中创建一个新的Property List文件，并将其命名为PushConfig.plist，填入Portal为你的应用提供的APP_KEY等参数。
-
-	CHANNEL指明应用程序包的下载渠道，为方便分渠道统计。根据你的需求自行定义即可。APP_KEY在管理Portal上创建应用时自动生成的（AppKey）用以标识该应用。请确保应用内配置的 AppKey 与第1步在 Portal 上创建应用时生成的 AppKey 一致，AppKey 可以在应用详情中查询。
-
-	APS_FOR_PRODUCTION表示应用是否采用生产证书发布( Ad_Hoc 或 APP Store )，0 (默认值)表示采用的是开发者证书，1 表示采用生产证书发布应用。请注意此处配置与 Web Portal 应用环境设置匹配。
-
-	
-		{
-	    "APS_FOR_PRODUCTION = "0";
-    	"CHANNEL" = "Publish channel";
-	    "APP_KEY" = "AppKey copied from JPush Portal application";
-		}
-
-*	Build Settings设置 Search Paths 下的 User Header Search Paths 和 Library Search Paths，比如SDK文件夹（默认为lib）与工程文件在同一级目录下，则都设置为"$(SRCROOT)/[文件夹名称]"即可。
-
-*	在XCode中选择“Add files to 'Your project name'...”，将lib子文件夹中的libPushSDK.a添加到你的工程目录中。
+* 将 Plugins/JPushPlugin_iOS 文件夹及内容拖拽到 Xcode 工程里，拖拽时 Choose options for adding these files 选择：
+	-  Destination：✓ Copy items if needed
+	-  Added folders：✓ Create groups
+	-  Add to targets：✓ your-cocos2d-x-proj
   
-*	将Plugins/iOS/lib 文件夹下的 APServer.h，libPushSDK.a,APServiceCpp.mm拖入 project 中(或者点击右键，点击 add files to "project name")，将将Plugins/APServer.h拖入Class文件夹中,和安卓共享同一个.
-
 #### 2. 添加代码
 
-* 	在ios/AppController.mm(注意不是AppDelegate.cpp) 中添加头文件`APService.h`
+* 	在 ios/AppController.mm (注意不是AppDelegate.cpp) 中添加头文件：
 
-		#import "APService.h"
+		#import "JPUSHService.h"
+		//#import <AdSupport/AdSupport.h>//如需使用广告标识符 IDFA 则添加该头文件，否则不添加
 
-* 在 AppController.mm 中添加监听系统事件，相应地调用 JPush SDK 提供的 API 来实现功能
+
+* 在 AppController.mm 中添加以下代码：（如果方法存在，则只将其中代码添加至方法中；如果方法不存在，则添加方法及其中代码）
 
 	```
 	- (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions{
@@ -56,58 +48,79 @@ JPush's officially supported Cocos2d-x plugin (Android &amp; iOS). 极光推送�
 		#if __IPHONE_OS_VERSION_MAX_ALLOWED > __IPHONE_7_1
 		    if ([[UIDevice currentDevice].systemVersion floatValue] >= 8.0) {
 		        //可以添加自定义categories
-		        [APService registerForRemoteNotificationTypes:(UIUserNotificationTypeBadge |
+		        [JPUSHService registerForRemoteNotificationTypes:(UIUserNotificationTypeBadge |
 		                                                       UIUserNotificationTypeSound |
 		                                                       UIUserNotificationTypeAlert)
 		                                           categories:nil];
 		        } else {
 		            //categories 必须为nil
-		            [APService registerForRemoteNotificationTypes:(UIRemoteNotificationTypeBadge |
+		            [JPUSHService registerForRemoteNotificationTypes:(UIRemoteNotificationTypeBadge |
 		                                                           UIRemoteNotificationTypeSound |
 		                                                           UIRemoteNotificationTypeAlert)
 		                                               categories:nil];
 		        }
 		#else
 		        //categories 必须为nil
-		        [APService registerForRemoteNotificationTypes:(UIRemoteNotificationTypeBadge |
+		        [JPUSHService registerForRemoteNotificationTypes:(UIRemoteNotificationTypeBadge |
 		                                                       UIRemoteNotificationTypeSound |
 		                                                       UIRemoteNotificationTypeAlert)
 		                                           categories:nil];
 		#endif
-		// Required
-     	[APService setupWithOption:launchOptions];
+		
+		//启动 sdk
+		/* （1）不使用 IDFA 启动 sdk
+			参数说明：
+            	appKey：极光官网控制台应用标识
+            	channel：频道，暂无可填任意
+            	apsForProduction：YES发布环境/NO开发环境
+		*/
+		[JPUSHService setupWithOption:launchOptions appKey:@"abcacdf406411fa656ee11c3" channel:@"" apsForProduction:NO];
+
+
+		/* （2）使用 IDFA 启动 sdk （不与上述方法同时使用）
+			参数说明：
+				appKey：极光官网控制台应用标识
+				channel：频道，暂无可填任意
+				apsForProduction：YES发布环境/NO开发环境
+				advertisingIdentifier：IDFA广告标识符
+		*/
+		//NSString *advertisingId = [[[ASIdentifierManager sharedManager] advertisingIdentifier] UUIDString];
+		//[JPUSHService setupWithOption:launchOptions appKey:@"abcacdf406411fa656ee11c3" channel:@"" apsForProduction:NO advertisingIdentifier:advertisingId];
+
+    return YES;
+		
+
+
     	......
 	    return YES;
 	}
 	```
 	```
-	- (void)application:(UIApplication *)application 
-	didRegisterForRemoteNotificationsWithDeviceToken:(NSData *)deviceToken{
+	- (void)application:(UIApplication *)application didRegisterForRemoteNotificationsWithDeviceToken:(NSData *)deviceToken{
 		// Required
-		[APService registerDeviceToken:deviceToken];
+		[JPUSHService registerDeviceToken:deviceToken];
 	}
 	```
 	```	
 	- (void)application:(UIApplication *)application
 	 		didReceiveRemoteNotification:(NSDictionary *)userInfo {
 	  	// Required
-	 	[APService registerDeviceToken:deviceToken];
+	 	[JPUSHService registerDeviceToken:deviceToken];
 	}
 	```
 	```
     //IOS7 only
-	- (void)application:(UIApplication *)application
-	didReceiveRemoteNotification:(NSDictionary *)userInfo
-		fetchCompletionHandler:(void (^)(UIBackgroundFetchResult))completionHandler {
-  		[APService handleRemoteNotification:userInfo];
+	- (void)application:(UIApplication *)application didReceiveRemoteNotification:(NSDictionary *)userInfo fetchCompletionHandler:(void (^)(UIBackgroundFetchResult))completionHandler {
+  		[JPUSHService handleRemoteNotification:userInfo];
 	  	completionHandler(UIBackgroundFetchResultNewData);
 	}
 	```
-* 在需要处理推送回调的类中添加回调函数，相应地调用 JPush SDK 提供的 API 来实现功能,调用地方需要引入头文件JPushService.h
+	
+* 在需要处理推送回调的类中添加回调函数，相应地调用 JPush SDK 提供的 API 来实现功能,调用地方需要引入头文件JPushBridge.h
 
-		#import "JPushService.h"
+		#import "JPushBridge.h"
 
-		JPushService::registerCallbackFunction(setupCallback, closeCallback,
+		JPushBridge::registerCallbackFunction(setupCallback, closeCallback,
                                          Register_callback, Login_callback,
                                          ReceiveMessage_callback);
                                          
@@ -126,7 +139,7 @@ JPush's officially supported Cocos2d-x plugin (Android &amp; iOS). 极光推送�
 
 * Tags、Alias设置方法	,自定义tagsAliasCallback要符合头文件的函数指针
 
-		JPushService::setAliasAndTags("别名1", tags1, tagsAliasCallback);
+		JPushBridge::setAliasAndTags("别名1", tags1, tagsAliasCallback);
 		
 * Tags过滤方法：需要传入一个result指针用以获取过滤后的Tags. 
 
