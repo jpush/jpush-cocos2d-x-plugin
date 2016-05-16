@@ -136,7 +136,7 @@ def checkParams(context):
     context["src_project_path"] = os.getcwd() + "/Android/"
 # end of checkParams(context) function
 def copyToProjcect():
-    libSource=context["src_project_path"]+"libs/jpush-sdk-release1.7.1.jar"
+    libSource=context["src_project_path"]+"libs/jpush-sdk-release2.1.5.jar"
     libTarget=context["dst_project_path"]+context["dst_project_name"]+"/proj.android/libs/"
     if not os.path.exists(libTarget):
         os.makedirs(libTarget)
@@ -152,20 +152,20 @@ def copyToProjcect():
         shutil.rmtree(prebuildTarget)
     shutil.copytree(prebuildSource,prebuildTarget)
 
-    # soSource=context["src_project_path"]+"libs/armeabi/libjpush164.so"
+    # soSource=context["src_project_path"]+"libs/armeabi/libjpush215.so"
     # v7aSoSource=context["src_project_path"]+"libs/armeabi-v7a"
 
     # soTarget=context["dst_project_path"]+context["dst_project_name"]+"/proj.android/libs/armeabi/"
     # if (os.path.exists(soTarget) == False):
     #     os.makedirs(soTarget)       
-    # soTarget+="libjpush164.so"
+    # soTarget+="libjpush215.so"
 
     # v7aSoTarget=context["dst_project_path"]+context["dst_project_name"]+"/proj.android/libs/armeabi-v7a"
 
     # shutil.copyfile(soSource,soTarget)
     # shutil.copytree(v7aSoSource,v7aSoTarget)
 
-#libs/jpush-sdk-release1.6.1.jar to libs
+#libs/jpush-sdk-release2.1.5.jar to libs
 # end of copyToProjcect(context) function
 def copyTextToAndroidmk():
     mkTargetPath=context["dst_project_path"]+context["dst_project_name"]+"/proj.android/jni/Android.mk"
