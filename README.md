@@ -22,7 +22,8 @@ JPush's officially supported Cocos2d-x plugin (Android &amp; iOS). 极光推送�
 		Foundation.framework
 		UIKit.framework
 		Security.framework
-		libz.tbd//若原先有 libz.dylib 则替换为 libz.tbd
+		SystemConfiguration.framework
+		libz.tbd//Xcode7 以下是 libz.dylib
 		AdSupport.framework//若需要使用 IDFA 广告标识符则添加该库
 
 * 将 Plugins/JPushPlugin_iOS 文件夹及内容拖拽到 Xcode 工程里，拖拽时 Choose options for adding these files 选择：
@@ -44,7 +45,7 @@ JPush's officially supported Cocos2d-x plugin (Android &amp; iOS). 极光推送�
 	- (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions{
 		
 		
-		// Required
+		// 注册推送
 		#if __IPHONE_OS_VERSION_MAX_ALLOWED > __IPHONE_7_1
 		    if ([[UIDevice currentDevice].systemVersion floatValue] >= 8.0) {
 		        //可以添加自定义categories
@@ -87,9 +88,6 @@ JPush's officially supported Cocos2d-x plugin (Android &amp; iOS). 极光推送�
 		//NSString *advertisingId = [[[ASIdentifierManager sharedManager] advertisingIdentifier] UUIDString];
 		//[JPUSHService setupWithOption:launchOptions appKey:@"abcacdf406411fa656ee11c3" channel:@"" apsForProduction:NO advertisingIdentifier:advertisingId];
 
-    return YES;
-		
-
 
     	......
 	    return YES;
@@ -102,10 +100,9 @@ JPush's officially supported Cocos2d-x plugin (Android &amp; iOS). 极光推送�
 	}
 	```
 	```	
-	- (void)application:(UIApplication *)application
-	 		didReceiveRemoteNotification:(NSDictionary *)userInfo {
+	- (void)application:(UIApplication *)application didReceiveRemoteNotification:(NSDictionary *)userInfo {
 	  	// Required
-	 	[JPUSHService registerDeviceToken:deviceToken];
+		[JPUSHService handleRemoteNotification:userInfo];
 	}
 	```
 	```
