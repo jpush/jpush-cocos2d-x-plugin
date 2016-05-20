@@ -1,11 +1,11 @@
 /*
- * JPushService.cpp
+ * JPushBridge.cpp
  *
  *  Created on: 2014?4?16?
  *      Author: john
  */
 
-#include "JPushService.h"
+#include "JPushBridge.h"
 #include <jni.h>
 #include <platform/android/jni/JniHelper.h>
 #include <map>
@@ -162,7 +162,7 @@ std::set<std::string> * getStdStringSet(std::set<std::string>*originalSet,jobjec
 }
 
 
-void JPushService::init(){
+void JPushBridge::init(){
     JniMethodInfo t;
     if ( JniHelper::getStaticMethodInfo(t
                                         ,kJPushClassName
@@ -175,7 +175,7 @@ void JPushService::init(){
     }
 }
 
-void JPushService::setDebugMode(bool enable){
+void JPushBridge::setDebugMode(bool enable){
     JniMethodInfo t;
     if ( JniHelper::getStaticMethodInfo(t
                                         ,kJPushClassName
@@ -187,7 +187,7 @@ void JPushService::setDebugMode(bool enable){
     }
 }
 
-void JPushService::stopPush(){
+void JPushBridge::stopPush(){
     JniMethodInfo t;
     if(JniHelper::getStaticMethodInfo(t
                                       ,kJPushClassName
@@ -200,7 +200,7 @@ void JPushService::stopPush(){
     }
 }
 
-void JPushService::resumePush(){
+void JPushBridge::resumePush(){
     JniMethodInfo t;
     if( JniHelper::getStaticMethodInfo(t
                                        ,kJPushClassName
@@ -213,7 +213,7 @@ void JPushService::resumePush(){
     }
 }
 
-bool JPushService::isPushStopped(){
+bool JPushBridge::isPushStopped(){
     JniMethodInfo t;
     jboolean isStopped;
     if( JniHelper::getStaticMethodInfo(t
@@ -241,7 +241,7 @@ jobject getCallbackHelperObject(){
     return callback;
 }
 
-void JPushService::setAliasAndTags(void* p_handle,const char *alias, set<string> *tags, APTagAliasCallback callback){
+void JPushBridge::setAliasAndTags(void* p_handle,const char *alias, set<string> *tags, APTagAliasCallback callback){
     JniMethodInfo t;
     jobject callbackHelper = getCallbackHelperObject();
     if( JniHelper::getMethodInfo(t
@@ -265,7 +265,7 @@ void JPushService::setAliasAndTags(void* p_handle,const char *alias, set<string>
     }
 }
 
-void JPushService::setAlias(void* p_handle,const char *alias, APTagAliasCallback callback){
+void JPushBridge::setAlias(void* p_handle,const char *alias, APTagAliasCallback callback){
     JniMethodInfo t;
     jobject callbackHelper = getCallbackHelperObject();
     if( JniHelper::getMethodInfo(t
@@ -287,7 +287,7 @@ void JPushService::setAlias(void* p_handle,const char *alias, APTagAliasCallback
     }
 }
 
-void JPushService::setTags(void* p_handle,set<string> *tags, APTagAliasCallback callback){
+void JPushBridge::setTags(void* p_handle,set<string> *tags, APTagAliasCallback callback){
     JniMethodInfo t;
     jobject callbackHelper = getCallbackHelperObject();
     if( JniHelper::getMethodInfo(t
@@ -309,7 +309,7 @@ void JPushService::setTags(void* p_handle,set<string> *tags, APTagAliasCallback 
     }
 }
 
-bool JPushService::filterValidTags(set<string> *tags, set<string> *result){
+bool JPushBridge::filterValidTags(set<string> *tags, set<string> *result){
     if(tags == NULL){
         return false;
     }
@@ -332,7 +332,7 @@ bool JPushService::filterValidTags(set<string> *tags, set<string> *result){
 }
 
 
-const char * JPushService::registrationID(){
+const char * JPushBridge::registrationID(){
     const char *ret = "";
     JniMethodInfo t;
     if( JniHelper::getStaticMethodInfo(t
@@ -354,7 +354,7 @@ const char * JPushService::registrationID(){
     return ret;
 }
 
-void JPushService::clearAllNotifications(){
+void JPushBridge::clearAllNotifications(){
     JniMethodInfo t;
     if (JniHelper::getStaticMethodInfo(t
                                        ,kJPushClassName
@@ -370,7 +370,7 @@ void JPushService::clearAllNotifications(){
 
 
 
-void JPushService::clearNotificationById(int notificationId){
+void JPushBridge::clearNotificationById(int notificationId){
     JniMethodInfo t;
     if (JniHelper::getStaticMethodInfo(t
                                        ,kJPushClassName
@@ -385,7 +385,7 @@ void JPushService::clearNotificationById(int notificationId){
     }
 }
 
-void JPushService::setPushTime(set<int> *weekDays, int startHour, int endHour){
+void JPushBridge::setPushTime(set<int> *weekDays, int startHour, int endHour){
     JniMethodInfo t;
     if (JniHelper::getStaticMethodInfo(t
                                        ,kJPushClassName
@@ -402,7 +402,7 @@ void JPushService::setPushTime(set<int> *weekDays, int startHour, int endHour){
     }
 }
 
-void JPushService::setSilenceTime(int startHour, int startMinute, int endHour, int endMinute){
+void JPushBridge::setSilenceTime(int startHour, int startMinute, int endHour, int endMinute){
     JniMethodInfo t;
     if (JniHelper::getStaticMethodInfo(t
                                        ,kJPushClassName
@@ -420,7 +420,7 @@ void JPushService::setSilenceTime(int startHour, int startMinute, int endHour, i
     }
 } 
 
-void JPushService::setLatestNotifactionNumber(int maxNum){
+void JPushBridge::setLatestNotifactionNumber(int maxNum){
     JniMethodInfo t;
     if (JniHelper::getStaticMethodInfo(t
                                        ,kJPushClassName
@@ -461,7 +461,7 @@ void Java_Your_Package_Name_JPushCallbackHelper_setAliasAndTagsCallback(JNIEnv *
     
 APNetworkDidReceiveMessage_callback notification_callback = NULL;
 void * notificationHandler = NULL;
-void JPushService::registerRemoteNotifcationCallback(void *p_handle, APNetworkDidReceiveMessage_callback message_callback){
+void JPushBridge::registerRemoteNotifcationCallback(void *p_handle, APNetworkDidReceiveMessage_callback message_callback){
     notification_callback = message_callback;
     notificationHandler = p_handle;
 }

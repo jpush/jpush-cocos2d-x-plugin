@@ -21,6 +21,9 @@ import sys
 import re
 import glob
 
+def jpushLog(arg):
+    print("----- JPush log ----- \n "+arg)
+#end of jpushLog function()
 
 def compare_xml(left, right, key_info='.'):
     OK=True  
@@ -83,6 +86,8 @@ def print_diff(main_pid, key_info, msg, base_type, test_type):
     return False  
 
 #end of xml compare function()
+
+
 def dumpUsage():
     print "Usage: install_jpush.py -project PROJECT_NAME -package PACKAGE_NAME -appkey APP_KEY"
     print "Options:"
@@ -98,7 +103,7 @@ def checkParams(context):
     # generate our internal params
     context["script_dir"] = os.getcwd() + "/"
     global platforms_list
-    
+
     # invalid invoke, tell users how to input params
     if len(sys.argv) < 7:
         dumpUsage()
@@ -130,14 +135,21 @@ def checkParams(context):
         raise_error = True
     if raise_error != False:
         sys.exit()
+
     # fill in src_project_name and src_package_name according to "language"
     context["src_project_name"] = "HelloCpp"
     context["src_package_name"] = "org.cocos2dx.hellocpp"
     context["src_project_path"] = os.getcwd() + "/Android/"
+
+    #merge path
+    context["dst_project_path"]=context["dst_project_path"]+context["dst_project_name"]
+
 # end of checkParams(context) function
+
+
 def copyToProjcect():
     libSource=context["src_project_path"]+"libs/jpush-sdk-release2.1.5.jar"
-    libTarget=context["dst_project_path"]+context["dst_project_name"]+"/proj.android/libs/"
+    libTarget=context["dst_project_path"]+"/proj.android-studio/app/libs/"
     if not os.path.exists(libTarget):
         os.makedirs(libTarget)
     else:
@@ -147,28 +159,35 @@ def copyToProjcect():
             shutil.rmtree(directory)
     shutil.copy(libSource,libTarget)
     prebuildSource=context["src_project_path"]+"libs/prebuild/"
-    prebuildTarget=context["dst_project_path"]+context["dst_project_name"]+"/proj.android/jni/prebuild/"
+    prebuildTarget=context["dst_project_path"]+"/proj.android-studio/app/jni/prebuild/"
     if os.path.exists(prebuildTarget):
         shutil.rmtree(prebuildTarget)
     shutil.copytree(prebuildSource,prebuildTarget)
 
-    # soSource=context["src_project_path"]+"libs/armeabi/libjpush215.so"
-    # v7aSoSource=context["src_project_path"]+"libs/armeabi-v7a"
+    appLibsTarget=context["dst_project_path"]+"/proj.android-studio/app/libs/"
+    copyFiles(prebuildSource,appLibsTarget)
 
-    # soTarget=context["dst_project_path"]+context["dst_project_name"]+"/proj.android/libs/armeabi/"
+    # soSource=context["src_project_path"]+"libs/prebuild/"
+    # v7aSoSource=context["src_project_path"]+"libs/prebuild/armeabi-v7a/libjpush215.so"
+
+    # soTarget=context["dst_project_path"]+"/proj.android-studio/app/libs/armeabi/"
+    # v7aTarget=context["dst_project_path"]+"/proj.android-studio/app/libs/armeabi-v7a/"
+
     # if (os.path.exists(soTarget) == False):
     #     os.makedirs(soTarget)       
     # soTarget+="libjpush215.so"
 
-    # v7aSoTarget=context["dst_project_path"]+context["dst_project_name"]+"/proj.android/libs/armeabi-v7a"
+    # v7aSoTarget=context["dst_project_path"]+"/proj.android/libs/armeabi-v7a"
 
     # shutil.copyfile(soSource,soTarget)
     # shutil.copytree(v7aSoSource,v7aSoTarget)
 
-#libs/jpush-sdk-release2.1.5.jar to libs
 # end of copyToProjcect(context) function
+
+
+
 def copyTextToAndroidmk():
-    mkTargetPath=context["dst_project_path"]+context["dst_project_name"]+"/proj.android/jni/Android.mk"
+    mkTargetPath=context["dst_project_path"]+"/proj.android-studio/app/jni/Android.mk"
     fp=file(mkTargetPath)
     lines=[]
     for line in fp: 
@@ -199,7 +218,7 @@ def copyTextToAndroidmk():
     #add jpush service cpp
     isExit=False
     for line in lines:
-        if line.find("JPushService.cpp")>=0:
+        if line.find("JPushBridge.cpp")>=0:
             isExit=True
             break
     if isExit==False:
@@ -207,43 +226,48 @@ def copyTextToAndroidmk():
         for linesub in lines:
             i=i+1
             if linesub.find("hellocpp/main.cpp")>=0:
-                lines.insert(i,"                    JPushService.cpp \\\n");
+                lines.insert(i,"                    JPushBridge.cpp \\\n");
                 break
     fp=file(mkTargetPath,'w')
     for s in lines:   
         fp.write(s)
     fp.close()
 # end of copyTextToAndroidmk(context) function
+
+
+
 def copyCodeToProject():
-    hfileSource = context["src_project_path"]+"../JPushService.h"
-    hfileTarget = context["dst_project_path"]+context["dst_project_name"]+"/Classes/JPushService.h"
-    hfileTargetPath = context["dst_project_path"]+context["dst_project_name"]+"/Classes/"
+    hfileSource = context["src_project_path"]+"../JPushBridge.h"
+    hfileTarget = context["dst_project_path"]+"/Classes/JPushBridge.h"
+    hfileTargetPath = context["dst_project_path"]+"/Classes/"
     if not os.path.exists(hfileTargetPath):
         os.makedirs(hfileTargetPath)
     elif os.path.exists(hfileTarget):
         os.remove(hfileTarget)
     shutil.copy(hfileSource,hfileTarget)
 
-    cppfileSource = context["src_project_path"]+"JPushService.cpp"
-    cppfileTarget = context["dst_project_path"]+context["dst_project_name"]+"/proj.android/jni/JPushService.cpp"
-    cppfileTargetPath=context["dst_project_path"]+context["dst_project_name"]+"/proj.android/jni/"
+    cppfileSource = context["src_project_path"]+"JPushBridge.cpp"
+    cppfileTarget = context["dst_project_path"]+"/proj.android-studio/app/jni/JPushBridge.cpp"
+    cppfileTargetPath=context["dst_project_path"]+"/proj.android-studio/app/jni/"
     if not os.path.exists(cppfileTargetPath):
         os.makedirs(cppfileTargetPath)
     elif os.path.exists(cppfileTarget):
         os.remove(cppfileTarget)
     shutil.copy(cppfileSource,cppfileTarget)
-
     javafileSource = context["src_project_path"]+"JPushCallbackHelper.java"
-    javafileTarget = context["dst_project_path"]+context["dst_project_name"]+"/proj.android/src/"
+    javafileTarget = context["dst_project_path"]+"/proj.android-studio/app/src/"
     paths=context["dst_package_name"].split('.');
     for path in paths:
         javafileTarget=javafileTarget+path+"/"
-    javafileTarget=javafileTarget+"JPushCallbackHelper.java"
-    if os.path.exists(javafileTarget):
-        os.remove(javafileTarget)
+    if os.path.exists(javafileTarget+"JPushCallbackHelper.java"):
+        os.remove(javafileTarget+"JPushCallbackHelper.java")
+    if not os.path.exists(javafileTarget):
+        os.makedirs(javafileTarget)
     shutil.copy(javafileSource,javafileTarget)
 
 # end of copyTextToAndroidmk(context) function
+
+
 def writeManifest():
     data = """<?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
@@ -334,7 +358,7 @@ def writeManifest():
 
     ET.register_namespace("android","http://schemas.android.com/apk/res/android")
 
-    manifest = context["dst_project_path"]+context["dst_project_name"]+"/proj.android/AndroidManifest.xml"
+    manifest = context["dst_project_path"]+"/proj.android-studio/app/AndroidManifest.xml"
     appKey = context["appkey"]
 
     tree_one = ET.parse(manifest)
@@ -401,7 +425,7 @@ def writeManifest():
 # end of writeManifest() function
 
 def replacePackageName():
-    pushserverTarget = context["dst_project_path"]+context["dst_project_name"]+"/proj.android/jni/JPushService.cpp"
+    pushserverTarget = context["dst_project_path"]+"/proj.android-studio/app/jni/JPushBridge.cpp"
     originString = context['dst_package_name']
     nameFunction = originString.replace('.','_');
     path=originString.replace('.','/')
@@ -418,14 +442,19 @@ def replacePackageName():
     fp = file(pushserverTarget,'w')
     fp.write(content)
     fp.close()
-    #print "replace package name done"
 
 # end of replacePackageName() function
+
 def fixMainActivity():
     #print "fixing main activity"
-    javafileTarget = context["dst_project_path"]+context["dst_project_name"]+"/proj.android/src/"
-    path=context['dst_package_name'].replace('.','/')
-    javafileTarget=javafileTarget+'/'+path+'/'+context['dst_project_name']+'.java'
+    javafileTarget = context["dst_project_path"]+"/proj.android-studio/app/src/"
+    for parent,dirnames,filenames in os.walk(javafileTarget):
+        for filename in filenames:
+            tempDir=os.path.join(parent,filename)
+            if tempDir.find("AppActivity.java")>0:
+                javafileTarget=tempDir
+#    path=context['dst_package_name'].replace('.','/')
+#    javafileTarget=javafileTarget+path+'/'+context['dst_project_name']+'.java'
     fp=file(javafileTarget)
     lines=[]
     resultExist=0
@@ -435,7 +464,7 @@ def fixMainActivity():
         i+=1
         if line.find("android.content.Context;")>=0:
             resultExist=1
-    fp.close()
+#    fp.close()
     if resultExist==0:
         i=0
         for line in lines:
@@ -443,6 +472,23 @@ def fixMainActivity():
             if line.find("import")>=0:
                 break
         lines.insert(i,"import android.content.Context;\n")
+
+    i=0
+    resultExist=0
+    for line in fp:
+        lines.append(line)
+        i+=1
+        if line.find("android.os.Bundle;")>=0:
+            resultExist=1
+    fp.close()
+    if resultExist==0:
+        i=0
+        for line in lines:
+            i+=1
+            if line.find("import")>=0:
+                break
+        lines.insert(i,"import android.os.Bundle;\n")
+
     isAdded=0
     for line in lines:
         if line.find("public static Context STATIC_REF = null")>0:
@@ -456,21 +502,25 @@ def fixMainActivity():
         lines.insert(i,  "      public static Context STATIC_REF = null;\n")
         lines.insert(i+1,"      public static Context getContext(){\n")
         lines.insert(i+2,"      return STATIC_REF;\n")
-        lines.insert(i+4,"  }\n")
-        i=0
-        for line in lines:
-            i=i+1
-            if line.find("super.onCreate")>=0:
-                break;
-        lines.insert(i, "       STATIC_REF = this.getApplicationContext();\n");
+        lines.insert(i+3,"      }\n\n")
+        lines.insert(i+4,"      protected void onCreate(Bundle savedInstanceState) {\n")
+        lines.insert(i+5,"      super.onCreate(savedInstanceState);\n")
+        lines.insert(i+6,"      STATIC_REF = this.getApplicationContext();\n      }\n")
+#        i=0
+#        for line in lines:
+#            i=i+1
+#            if line.find("super.onCreate")>=0:
+#                break;
+#        lines.insert(i, "       STATIC_REF = this.getApplicationContext();\n");
     fp=file(javafileTarget,'w')
     for s in lines:
         fp.write(s)
     fp.close()
 
 # end of fixMainActivity() function
+
 def fixJPushCallbackHelper():
-    javafileTarget = context["dst_project_path"]+context["dst_project_name"]+"/proj.android/src/"
+    javafileTarget = context["dst_project_path"]+"/proj.android-studio/app/src/"
     path=context['dst_package_name'].replace('.','/')
     javafileTarget=javafileTarget+path+'/'+'JPushCallbackHelper.java'
     fp=file(javafileTarget)
@@ -491,6 +541,27 @@ def fixJPushCallbackHelper():
     fp.close()
 #end of fixJPushCallbackHelper() function
 
+
+# super copy
+def copyFiles(sourceDir, targetDir):
+    if sourceDir.find(".svn") > 0:
+        return
+    for file in os.listdir(sourceDir):
+        sourceFile = os.path.join(sourceDir,  file)
+        targetFile = os.path.join(targetDir,  file)
+        if os.path.isfile(sourceFile):
+            if not os.path.exists(targetDir):
+                os.makedirs(targetDir)
+            if not os.path.exists(targetFile) or(os.path.exists(targetFile) and (os.path.getsize(targetFile) != os.path.getsize(sourceFile))):
+                    open(targetFile, "wb").write(open(sourceFile, "rb").read())
+        if os.path.isdir(sourceFile):
+            First_Directory = False
+            copyFiles(sourceFile, targetFile)
+# super copy end
+
+
+
+
 # -------------- main --------------
 # dump argvs
 # print sys.argv
@@ -502,4 +573,4 @@ writeManifest();
 replacePackageName();
 fixMainActivity();
 fixJPushCallbackHelper();
-print "The JPush SDK has been successfully import in your project,have fun!"
+jpushLog("The JPush SDK has been successfully import in your project,have fun!")

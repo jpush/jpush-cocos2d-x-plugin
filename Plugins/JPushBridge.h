@@ -4,8 +4,8 @@
 //  Created by zhanghao on 14-4-16.
 //  Copyright (c) 2012年 HXHG. All rights reserved.
 //
-#ifndef JPUSHSBRIDGE_H
-#define JPUSHSBRIGDGE_H
+#ifndef JPUSHBRIDGE_H
+#define JPUSHBRIGDGE_H
 
 #include <string>
 #include <map>
