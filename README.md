@@ -1,5 +1,5 @@
 # jpush-cocos2d-x-plugin
-======================
+-----
 [![Gitter](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/jpush/jpush-phonegap-plugin)
 [![platforms](https://img.shields.io/badge/platforms-iOS%7CAndroid-lightgrey.svg)](https://github.com/jpush/jpush-cocos2d-x-plugin)
 [![weibo](https://img.shields.io/badge/weibo-JPush-blue.svg)](http://weibo.com/jpush?refer_flag=1001030101_&is_all=1)
@@ -8,7 +8,7 @@ JPush's officially supported Cocos2d-x plugin (Android &amp; iOS). 极光推送�
 
 
 ## iOS Project 集成 JPush 插件
------------------------
+
 #### 1. 配置基本信息
 
 * 使用 cocos2d-x 生成 iOS 工程
