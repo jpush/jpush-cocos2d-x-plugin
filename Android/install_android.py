@@ -237,7 +237,7 @@ def copyTextToAndroidmk():
 
 
 def copyCodeToProject():
-    hfileSource = context["src_project_path"]+"../JPushBridge.h"
+    hfileSource = context["src_project_path"]+"/JPushBridge.h"
     hfileTarget = context["dst_project_path"]+"/Classes/JPushBridge.h"
     hfileTargetPath = context["dst_project_path"]+"/Classes/"
     if not os.path.exists(hfileTargetPath):
@@ -573,4 +573,4 @@ writeManifest();
 replacePackageName();
 fixMainActivity();
 fixJPushCallbackHelper();
-jpushLog("The JPush SDK has been successfully import in your project,have fun!")
+jpushLog("JPush SDK installed successfully,have fun!")

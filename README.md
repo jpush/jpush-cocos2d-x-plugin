@@ -1,4 +1,4 @@
-jpush-cocos2d-x-plugin
+# jpush-cocos2d-x-plugin
 ======================
 [![Gitter](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/jpush/jpush-phonegap-plugin)
 [![platforms](https://img.shields.io/badge/platforms-iOS%7CAndroid-lightgrey.svg)](https://github.com/jpush/jpush-cocos2d-x-plugin)
@@ -7,13 +7,13 @@ jpush-cocos2d-x-plugin
 JPush's officially supported Cocos2d-x plugin (Android &amp; iOS). 极光推送官方支持的 Cocos2d-x 插件（Android &amp; iOS）。
 
 
-## 集成 JPush Cocos2d-x iOS SDK
+## iOS Project 集成 JPush 插件
 -----------------------
 #### 1. 配置基本信息
 
-* 使用 cocos2d-x 脚本生成 iOS 工程
+* 使用 cocos2d-x 生成 iOS 工程
 
-* 添加必要框架。打开 xcode，点击 project，选择 (Targets -> Build Phases -> Link Binary With Libraries)
+* 添加必要框架。打开 xcode，点击 project，选择 (Targets -> Build Phases -> Link Binary With Libraries)，添加以下框架：
 
 		CFNetwork.framework
 		CoreFoundation.framework
@@ -26,14 +26,14 @@ JPush's officially supported Cocos2d-x plugin (Android &amp; iOS). 极光推送�
 		libz.tbd//Xcode7 以下是 libz.dylib
 		AdSupport.framework//若需要使用 IDFA 广告标识符则添加该库
 
-* 将 Plugins/JPushPlugin_iOS 文件夹及内容拖拽到 Xcode 工程里，拖拽时 Choose options for adding these files 选择：
+* 将插件的 /iOS/JPushPlugin 文件夹及内容拖拽到 Xcode 工程里，拖拽时 Choose options for adding these files 选择：
 	-  Destination：✓ Copy items if needed
 	-  Added folders：✓ Create groups
-	-  Add to targets：✓ your-cocos2d-x-proj
+	-  Add to targets：✓ your-proj-name
   
 #### 2. 添加代码
 
-* 	在 ios/AppController.mm (注意不是AppDelegate.cpp) 中添加头文件：
+* 	在工程的 /ios/AppController.mm (注意不是AppDelegate.cpp) 中添加头文件：
 
 		#import "JPUSHService.h"
 		//#import <AdSupport/AdSupport.h>//如需使用广告标识符 IDFA 则添加该头文件，否则不添加
@@ -147,30 +147,60 @@ JPush's officially supported Cocos2d-x plugin (Android &amp; iOS). 极光推送�
 		void register_callback(const char *registrationID)；
 		
 
----------------------------------------------------------------------------
-## 集成 JPush Cocos2d-x Android SDK
+
+## Android & Android Studio Project 集成 JPush
 
 
-####执行脚本
-* 将下载下来的`jpush-cocos2d-x-plugin`文件夹拖到`{COCOS2DX_ROOT}/plugin/plugins`目录下。
-* 执行`jpush-cocos2d-x-plugin/Plugins/install_jpush.py`
+#### 执行自动安装脚本
 
-		./install_jpush.py -project YourProjectName -package YourPackageName -appkey YourAppkey
+- 将工程文件 `YourProjectName` 置于 Cocos2d-x-3.x `/projects/`目录下
+
+- 将插件 `jpush-cocos2d-x-plugin` 文件夹置于 cocos2d-x-3.x `/plugin/plugins/` 目录下。
+
+- 使用命令行工具，进入插件目录 `/jpush-cocos2d-x-plugin/Android/`执行自动安装脚本
+	- Android 工程（pro.android）执行 install_android.py
 	
-	完成！
+			./install_android.py -project YourProjectName -package YourPackageName -appkey YourAppkey
+		
 
-####使用API
+	- Android Studio 工程（proj.android-studio）执行 install_android_studio.py
+	
+			./install_android_studio.py -project YourProjectName -package YourPackageName -appkey YourAppkey
 
-JPush SDK 提供的 API 接口,都主要集中在 JPushService.h 类里。只需要在第一个游戏场景中：
+	
+	显示`JPush SDK installed successfully,have fun!`则安装成功！
+	
+- 因目录结构不同可能导致安装失败，关键位置目录关系参照如下(以 cocos2d-x-3.10 为例)：
+		
+			../Cocos2d-x/cocos2d-x-3.10/
+			├─┬ /plugin/plugins/jpush-cocos2d-x-plugin/Android/
+			│ ├── install_android.py
+			│ └── install_android_studio.py
+			└─┬ /projects/YourProjectName/
+			  ├── /Classes/
+			  ├─┬ /proj.android/
+			  │ ├── /jni/
+			  │ ├── /libs/
+			  │ └── /src/
+			  └─┬ /proj.android-studio/app/
+			    ├── /jni/
+			    ├── /libs/
+			    └── /src/
+	- 因 Cocos2d-x 版本不同导致目录变化，可相应的对自己的目录进行调整，以便成功安装
+	- 自动安装失败时可以尝试 [手动安装](https://github.com/jpush/jpush-cocos2d-x-plugin/issues/1)
+			    
+#### 使用API
+
+JPush SDK 提供的 API 接口,都主要集中在 JPushBridge.h 类里。只需要在第一个游戏场景中：
 
 - init 初始化SDK
 
-		JPushService::init();
+		JPushBridge::init();
 		
 - setDebugMode 设置调试模式
 
 		// You can enable debug mode in developing state. You should close debug mode when release.
-	    JPushService::setDebugMode(true);
+	    JPushBridge::setDebugMode(true);
 	   
 就可以使用推送消息了。
 
@@ -192,9 +222,9 @@ JPush SDK 提供的 API 接口,都主要集中在 JPushService.h 类里。只需
 	        <category android:name="You Package Name" />
 	    </intent-filter>
 	</receiver>
-将`Your Package Name`替换成你自己的包名。
+将 `Your Package Name` 替换成你自己的包名。
 
-**2.** 将SDK中的`Android/JPushReceiver.java`放在`src`包名目录下.
+**2.** 将SDK中的 `Android/JPushReceiver.java` 放在 `src` 包名目录下.
 
 **3.** 注册回调函数
 
@@ -206,9 +236,9 @@ JPush SDK 提供的 API 接口,都主要集中在 JPushService.h 类里。只需
 	}
 然后调用
 	   
-	JPushService::registerRemoteNotifcationCallback(this, &handlerRemoteNotification);
+	JPushBridge::registerRemoteNotifcationCallback(this, &handlerRemoteNotification);
 	 
-向JPushService注册此回调函数，具体字段可参考`JPushReceiver.java`类。
+向 JPushBridge 注册此回调函数，具体字段可参考 `JPushReceiver.java` 类。
 
 #### 测试确认
 1. 确认所需的权限都已经添加。如果必须的权限未添加,日志会提示错误。
@@ -223,7 +253,7 @@ JPush SDK 提供的 API 接口,都主要集中在 JPushService.h 类里。只需
 
 ##### multiple definition of 'getCallbackHelperObject
 
-* 检查文件**jni/Android.mk**中**LOCAL_SRC_FILES :**是否重复包含**JPushService.cpp**
+* 检查文件**jni/Android.mk**中**LOCAL_SRC_FILES :**是否重复包含**JPushBridge.cpp**
 
 #####如何升级cocos2d-x plugin for android插件		
 * 将`{COCOS2DX_ROOT}/plugin/plugins/jpush-cocos2d-x-plugin`文件夹删除，再按照上面的集成文档执行install_jpush.py脚本即可		
@@ -251,7 +281,7 @@ JPush SDK 提供的 API 接口,都主要集中在 JPushService.h 类里。只需
 
 
 
-##高级功能 
+## 高级功能 
 请参考:
 
 [android 标签与别名API](http://docs.jpush.cn/pages/viewpage.action?pageId=557241)
@@ -261,9 +291,9 @@ JPush SDK 提供的 API 接口,都主要集中在 JPushService.h 类里。只需
 
 [ios 接收推送消息](http://docs.jpush.cn/pages/viewpage.action?pageId=3310013)
 
-##技术支持
+## 技术支持
 邮件联系:<support@jpush.cn> 
 
-技术QQ群:132992583
+极光社区(答疑论坛):[http://community.jpush.cn/](http://community.jpush.cn/)
 
 
