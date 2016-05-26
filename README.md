@@ -1,5 +1,5 @@
 # jpush-cocos2d-x-plugin
------
+
 [![Gitter](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/jpush/jpush-phonegap-plugin)
 [![platforms](https://img.shields.io/badge/platforms-iOS%7CAndroid-lightgrey.svg)](https://github.com/jpush/jpush-cocos2d-x-plugin)
 [![weibo](https://img.shields.io/badge/weibo-JPush-blue.svg)](http://weibo.com/jpush?refer_flag=1001030101_&is_all=1)
@@ -11,9 +11,9 @@ JPush's officially supported Cocos2d-x plugin (Android &amp; iOS). 极光推送�
 
 #### 1. 配置基本信息
 
-* 使用 cocos2d-x 生成 iOS 工程
+* 使用 Cocos2d-x 生成 iOS 工程
 
-* 添加必要框架。打开 xcode，点击 project，选择 (Targets -> Build Phases -> Link Binary With Libraries)，添加以下框架：
+* 添加必要框架。打开 Xcode，点击 project，选择 (Targets -> Build Phases -> Link Binary With Libraries)，添加以下框架：
 
 		CFNetwork.framework
 		CoreFoundation.framework
@@ -168,7 +168,7 @@ JPush's officially supported Cocos2d-x plugin (Android &amp; iOS). 极光推送�
 			./install_android_studio.py -project YourProjectName -package YourPackageName -appkey YourAppkey
 
 	
-	显示`JPush SDK installed successfully,have fun!`则安装成功！
+	显示 `JPush SDK installed successfully,have fun!` 则安装成功！
 	
 - 因目录结构不同可能导致安装失败，关键位置目录关系参照如下(以 cocos2d-x-3.10 为例)：
 		
@@ -253,29 +253,29 @@ JPush SDK 提供的 API 接口,都主要集中在 JPushBridge.h 类里。只需�
 
 ##### multiple definition of 'getCallbackHelperObject
 
-* 检查文件**jni/Android.mk**中**LOCAL_SRC_FILES :**是否重复包含**JPushBridge.cpp**
+* 检查文件 **jni/Android.mk** 中 **LOCAL_SRC_FILES :** 是否重复包含 **JPushBridge.cpp**
 
-#####如何升级cocos2d-x plugin for android插件		
+#####如何升级 Cocos2d-x plugin for Android 插件		
 * 将`{COCOS2DX_ROOT}/plugin/plugins/jpush-cocos2d-x-plugin`文件夹删除，再按照上面的集成文档执行install_jpush.py脚本即可		
 
 ##### c++接口的怎么调用？
-* c++的函数名称与java方法相对应，具体请参照[JPush文档: android的API](http://docs.jpush.cn/display/dev/API%3A+Android)
+* C++的函数名称与 java 方法相对应，具体请参照[JPush文档: Android 的 API](http://docs.jpush.cn/display/dev/API%3A+Android)
 
 ##### 在android的工程中加了其他的SDK时，重新编译时，其他SDK的so文件消息怎么办？
 
-引起的原因:是因为libs/armeabi目录大小发生较大的变化时，每次编译会更新这个目录，导致我们的第三方库被删除
+引起的原因:是因为 libs/armeabi 目录大小发生较大的变化时，每次编译会更新这个目录，导致我们的第三方库被删除
 
 解决方案：
 
-1. 在[your_android_project]/jni/preduild/Android.mk文件中 加入
+1. 在 [your_android_project]/jni/preduild/Android.mk 文件中 加入
 		
 		include $(CLEAR_VARS)
 		LOCAL_MODULE := your_module
 		LOCAL_SRC_FILES := your_project.so
 		include $(PREBUILT_SHARED_LIBRARY)
 
-2. 在[your_android_project]/jni/Andorid.mk中找到`LOCAL_SHARED_LIBRARIES := jpush_so
-`将其修改成：
+2. 在 [your_android_project]/jni/Andorid.mk 中找到 `LOCAL_SHARED_LIBRARIES := jpush_so
+` 将其修改成：
 
 		LOCAL_SHARED_LIBRARIES := jpush_so your_project_so
 
@@ -284,16 +284,16 @@ JPush SDK 提供的 API 接口,都主要集中在 JPushBridge.h 类里。只需�
 ## 高级功能 
 请参考:
 
-[android 标签与别名API](http://docs.jpush.cn/pages/viewpage.action?pageId=557241)
-[android 接收推送消息](http://docs.jpush.cn/pages/viewpage.action?pageId=1343602)
+[Android 标签与别名API](http://docs.jpush.cn/pages/viewpage.action?pageId=557241)
+[Android 接收推送消息](http://docs.jpush.cn/pages/viewpage.action?pageId=1343602)
 
-[ios 标签与别名API](http://docs.jpush.cn/pages/viewpage.action?pageId=3309913)
+[iOS 标签与别名API](http://docs.jpush.cn/pages/viewpage.action?pageId=3309913)
 
-[ios 接收推送消息](http://docs.jpush.cn/pages/viewpage.action?pageId=3310013)
+[iOS 接收推送消息](http://docs.jpush.cn/pages/viewpage.action?pageId=3310013)
 
 ## 技术支持
-邮件联系:<support@jpush.cn> 
+邮件联系: <support@jpush.cn> 
 
-极光社区(答疑论坛):[http://community.jpush.cn/](http://community.jpush.cn/)
+极光社区(答疑论坛): [http://community.jpush.cn/](http://community.jpush.cn/)
 
 
